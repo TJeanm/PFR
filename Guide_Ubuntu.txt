@@ -1,0 +1,8 @@
+Taper juste Ubuntu dans le terminal
+Ensuite pour accèder aux dossier faire : 
+cd /mnt/c/Users/ferre/Documents/Travail/Upssitech/PFR
+
+et voila ;)
+
+pour compiler : gcc -o Commande_vocal Commande_vocal.c
+pour executer : ./Commande_vocal
