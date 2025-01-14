@@ -1,6 +1,6 @@
 #include "interface.h"
 
-const char *nom_fichier = "mdp.txt";
+const char *nom_fichier = "../Config/mdp.txt";
 int nombre_tentatives =0;
 int mdp;
 
@@ -65,7 +65,7 @@ void menu_principal(){
     switch (a){
         case 0:
             printf("Sortie du programme");
-            break;
+            exit(0);
         case 1 :
             mode_utilisateur();
 
