@@ -171,16 +171,29 @@ PILE ligne_to_PILE(PILE p,char chaine[], char * delimitateur)
 #define MAX_LANGUES 5
 #define MAX_COMMANDES 400
 
-PILE langue_FR1()
+PILE recuperation_liste_commande()
 {
+  FILE *fichier_choix = fopen("choix_langue.txt", "r");
+  if (!fichier_choix) {
+    perror("Erreur lors de l'ouverture du fichier choix_langue.txt");
+    return init_PILE();
+  }
+  int choix = 0; // 400 char par langue
+  fscanf(fichier_choix, "%d", &choix);
+
+  fclose(fichier_choix);
+
+
   FILE *fichier = fopen("liste_commande_vocal.csv", "r");
   if (!fichier) {
-    perror("Erreur lors de l'ouverture du fichier");
+    perror("Erreur lors de l'ouverture du fichier liste_commande_vocal.csv");
     return init_PILE();
   }
 
   char ligne[MAX_COMMANDES]; // 400 char par langue
-  fgets(ligne, sizeof(ligne), fichier);
+  for(int i=1; i<=choix; i++){
+    fgets(ligne, sizeof(ligne), fichier);
+  }
 
   PILE liste_commande = init_PILE();
   liste_commande = ligne_to_PILE(liste_commande, ligne, ";");
@@ -190,7 +203,7 @@ PILE langue_FR1()
   return liste_commande;
 }
 
-PILE choix_langue()
+void choix_langue()
 {
   FILE *fichier = fopen("liste_commande_vocal.csv", "r");
   if (!fichier) {
@@ -220,6 +233,7 @@ PILE choix_langue()
     if (!fichier_langue) {
       perror("Erreur lors de l'ouverture du fichier choix_langue.txt");
     } else {
+      fprintf(fichier_langue, "%d\n", choix); // Écrit dans le fichier
       fprintf(fichier_langue, "%s\n", commandes[choix-1].tab[0]); // Écrit dans le fichier
       fclose(fichier_langue);
     }
@@ -247,9 +261,9 @@ PILE receptionVocal()
 
 int detectMot(PILE vocal, PILE commande, int *action, int *distance, int nb_mot) // nb_mot max = 5
 {
-  printf("\nnbr mot de vocal = %d\n", vocal.tete);
-  printf("nbr mot de commande = %d\n", commande.tete);
-  printf("nb_mot reagerdé = %d\n", nb_mot);
+  //printf("\nnbr mot de vocal = %d\n", vocal.tete);
+  //printf("nbr mot de commande = %d\n", commande.tete);
+  //printf("nb_mot reagerdé = %d\n", nb_mot);
   ELEMENT tempo;
   *action = 0;
   *distance = 0;
@@ -377,12 +391,12 @@ void realisation_Action(PILE commande, int action, int distance)
       break;
 
     default:
-      printf("Aucune action associée au cas détecté.\n");
+      printf("Aucune action n'a été détecter.\n");
       break;
   }
 }
 
-int main() 
+int main()
 {
   printf("Début des tests\n\n");
 
@@ -391,8 +405,8 @@ int main()
   PILE liste_vocal_12 = init_PILE();
   liste_vocal_12 = receptionVocal();
   PILE liste_commande_12 = init_PILE();
-  //liste_commande_12 = langue_FR1(liste_commande_12);
-  liste_commande_12 = choix_langue();
+  choix_langue();
+  liste_commande_12 = recuperation_liste_commande(); //Commande
 
   int action_12 = 0;
   int distance_12 = 0;
@@ -401,7 +415,6 @@ int main()
   test_11 = detectMot(liste_vocal_12, liste_commande_12, &action_12, &distance_12, 5);
   realisation_Action(liste_commande_12, action_12, distance_12);
   //printf("%d\n", action_12);
-
   
 
   printf("\nFin des tests\n");
