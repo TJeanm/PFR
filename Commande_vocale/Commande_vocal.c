@@ -220,10 +220,10 @@ void choix_langue()
       idx_langue++;
     }
 
-    printf("Selectionner la langue désiré :\n");
+    printf("\nSelectionner la langue désiré :\n");
     for(int i=0; i<idx_langue; i++)
     {
-      printf("%d = ", i+1);
+      printf("  %d = ", i+1);
       affiche_ELEMENT(commandes[i].tab[0]);
     }
     scanf("%d", &choix);
@@ -257,6 +257,56 @@ PILE receptionVocal()
 
   fclose(fichier);
   return recept_vocal;
+}
+
+void ecriture_commande(char * action, int distance)
+{
+  FILE *fichier_simu_LECTURE = fopen("../C_to_simulation.csv", "r");
+    if (!fichier_simu_LECTURE) {
+      perror("Erreur lors de l'ouverture du fichier C_to_simulation.csv");
+    } else {
+
+      char ligne[MAX_COMMANDES];
+      fgets(ligne, sizeof(ligne), fichier_simu_LECTURE);
+      PILE recept_index = init_PILE();
+      recept_index = ligne_to_PILE(recept_index, ligne, ";");
+
+      int index = atoi(recept_index.tab[2]) + 1;
+      fclose(fichier_simu_LECTURE);
+
+      FILE *fichier_simu_ECRITURE = fopen("../C_to_simulation.csv", "w");
+      if (!fichier_simu_ECRITURE) {
+        perror("Erreur lors de l'ouverture du fichier C_to_simulation.csv");
+      } else {
+        fprintf(fichier_simu_ECRITURE, "%s;%d;%d;0\n", action, distance, index); // Écrit dans le fichier
+        fclose(fichier_simu_ECRITURE);
+      }
+    }
+}
+
+int verif_action_ok()
+{
+  FILE *fichier_simu_LECTURE = fopen("../C_to_simulation.csv", "r");
+    if (!fichier_simu_LECTURE) {
+      perror("Erreur lors de l'ouverture du fichier C_to_simulation.csv");
+      return 0;
+
+    } else {
+
+      char ligne[MAX_COMMANDES];
+      fgets(ligne, sizeof(ligne), fichier_simu_LECTURE);
+      PILE recept_res = init_PILE();
+      recept_res = ligne_to_PILE(recept_res, ligne, ";");
+
+      int res = atoi(recept_res.tab[3]);
+      fclose(fichier_simu_LECTURE);
+      return res;
+    }
+}
+
+int lecture_distance(int nbmot, int index_vocal)
+{
+  
 }
 
 int detectMot(PILE vocal, PILE commande, int *action, int *distance, int nb_mot) // nb_mot max = 5
@@ -307,7 +357,7 @@ int detectMot(PILE vocal, PILE commande, int *action, int *distance, int nb_mot)
           detect = 1;
 
           if (j==2 || j==6 || j==9 || j==13){
-            printf("%d\n", 23);
+            printf("test23\n");
           }
         }
       }
@@ -320,79 +370,88 @@ int detectMot(PILE vocal, PILE commande, int *action, int *distance, int nb_mot)
   return detect;
 }
 
-void realisation_Action(PILE commande, int action, int distance)
+int realisation_Action(PILE commande, int action, int distance)
 {
-  switch(action){
-    case 1 :
-      affiche_ELEMENT(commande.tab[1]);
-      break;
-    case  2 :
-      affiche_ELEMENT(commande.tab[2]);
-      break;
-    case 3 :
-      affiche_ELEMENT(commande.tab[3]);
-      break;
-    case 4 :
-      affiche_ELEMENT(commande.tab[4]);
-      break;
-    case 5 :
-      affiche_ELEMENT(commande.tab[5]);
-      break;
-    case 6 :
-      affiche_ELEMENT(commande.tab[6]);
-      break;
-    case 7 :
-      affiche_ELEMENT(commande.tab[7]);
-      break;
-    case 8 :
-      affiche_ELEMENT(commande.tab[8]);
-      break;
-    case 9 :
-      affiche_ELEMENT(commande.tab[9]);
-      break;
-    case 10 :
-      affiche_ELEMENT(commande.tab[10]);
-      break;
-    case 11 :
-      affiche_ELEMENT(commande.tab[11]);
-      break;
-    case 12 :
-      affiche_ELEMENT(commande.tab[12]);
-      break;
-    case 13 :
-      affiche_ELEMENT(commande.tab[13]);
-      break;
-    case 14 :
-      affiche_ELEMENT(commande.tab[14]);
-      break;
-    case 15 :
-      affiche_ELEMENT(commande.tab[15]);
-      break;
-    case 16 :
-      affiche_ELEMENT(commande.tab[16]);
-      break;
-    case 17 :
-      affiche_ELEMENT(commande.tab[17]);
-      break;
-    case 18 :
-      affiche_ELEMENT(commande.tab[18]);
-      break;
-    case 19 :
-      affiche_ELEMENT(commande.tab[19]);
-      break;
-    case 20 :
-      affiche_ELEMENT(commande.tab[20]);
-      break;
-    case 21 :
-      affiche_ELEMENT(commande.tab[21]);
-      break;
-    case 22 :
-      affiche_ELEMENT(commande.tab[22]);
-      break;
+  char * avancer = "avancer";
+  char * droite = "tourne a droite";
+  char * gauche = "tourne a gauche";
 
-    default:
+  if (verif_action_ok()){  //!
+    printf("L'acion précédente n'est pas fini, veillez attendre puis recommencer\n");
+  }else{
+    switch(action){
+      case 1 :
+        affiche_ELEMENT(commande.tab[1]);
+        break;
+      case  2 :
+        ecriture_commande(avancer, 30);
+        affiche_ELEMENT(commande.tab[2]);
+        break;
+      case 3 :
+        affiche_ELEMENT(commande.tab[3]);
+        break;
+      case 4 :
+        affiche_ELEMENT(commande.tab[4]);
+        break;
+      case 5 :
+        affiche_ELEMENT(commande.tab[5]);
+        break;
+      case 6 :
+        affiche_ELEMENT(commande.tab[6]);
+        break;
+      case 7 :
+        affiche_ELEMENT(commande.tab[7]);
+        break;
+      case 8 :
+        affiche_ELEMENT(commande.tab[8]);
+        break;
+      case 9 :
+        affiche_ELEMENT(commande.tab[9]);
+        break;
+      case 10 :
+        affiche_ELEMENT(commande.tab[10]);
+        break;
+      case 11 :
+        affiche_ELEMENT(commande.tab[11]);
+        break;
+      case 12 :
+        affiche_ELEMENT(commande.tab[12]);
+        break;
+      case 13 :
+        affiche_ELEMENT(commande.tab[13]);
+        break;
+      case 14 :
+        affiche_ELEMENT(commande.tab[14]);
+        break;
+      case 15 :
+        affiche_ELEMENT(commande.tab[15]);
+        break;
+      case 16 :
+        affiche_ELEMENT(commande.tab[16]);
+        break;
+      case 17 :
+        affiche_ELEMENT(commande.tab[17]);
+        break;
+      case 18 :
+        affiche_ELEMENT(commande.tab[18]);
+        break;
+      case 19 :
+        affiche_ELEMENT(commande.tab[19]);
+        break;
+      case 20 :
+        affiche_ELEMENT(commande.tab[20]);
+        break;
+      case 21 :
+        affiche_ELEMENT(commande.tab[21]);
+        break;
+      case 22 :
+        affiche_ELEMENT(commande.tab[22]);
+        break;
+
+      default:
       printf("Aucune action n'a été détecter.\n");
       break;
+    }
   }
 }
 
@@ -401,20 +460,20 @@ int main()
   printf("Début des tests\n\n");
 
 
-  printf("\nTEST 12 : REALISATION ACTION\n");
-  PILE liste_vocal_12 = init_PILE();
-  liste_vocal_12 = receptionVocal();
-  PILE liste_commande_12 = init_PILE();
+  printf("\nTEST 13 : LECTURE DES DISTANCES\n");
+  PILE liste_vocal_13 = init_PILE();
+  liste_vocal_13 = receptionVocal();
+  PILE liste_commande_13 = init_PILE();
   choix_langue();
-  liste_commande_12 = recuperation_liste_commande(); //Commande
+  liste_commande_13 = recuperation_liste_commande(); //Commande
 
-  int action_12 = 0;
-  int distance_12 = 0;
+  int action_13 = 0;
+  int distance_13 = 0;
   
-  int test_11 = 0;
-  test_11 = detectMot(liste_vocal_12, liste_commande_12, &action_12, &distance_12, 5);
-  realisation_Action(liste_commande_12, action_12, distance_12);
-  //printf("%d\n", action_12);
+  int test_13 = 0;
+  test_13 = detectMot(liste_vocal_13, liste_commande_13, &action_13, &distance_13, 5);
+  realisation_Action(liste_commande_13, action_13, distance_13);
+  printf("%d\n", action_13);
   
 
   printf("\nFin des tests\n");

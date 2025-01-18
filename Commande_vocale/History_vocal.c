@@ -279,4 +279,19 @@ void historyTest()
   int test_11 = 0;
   test_11 = detectMot(liste_vocal_11, liste_commande_11, &action_11, 5);
   affiche_ELEMENT(action_11);
+
+  printf("\nTEST 12 : ECRITURE POUR SIMULATION\n");
+  PILE liste_vocal_12 = init_PILE();
+  liste_vocal_12 = receptionVocal();
+  PILE liste_commande_12 = init_PILE();
+  choix_langue();
+  liste_commande_12 = recuperation_liste_commande(); //Commande
+
+  int action_12 = 0;
+  int distance_12 = 0;
+  
+  int test_12 = 0;
+  test_12 = detectMot(liste_vocal_12, liste_commande_12, &action_12, &distance_12, 5);
+  realisation_Action(liste_commande_12, action_12, distance_12);
+  printf("%d\n", action_12);
 }
