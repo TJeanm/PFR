@@ -294,4 +294,19 @@ void historyTest()
   test_12 = detectMot(liste_vocal_12, liste_commande_12, &action_12, &distance_12, 5);
   realisation_Action(liste_commande_12, action_12, distance_12);
   printf("%d\n", action_12);
+
+  printf("\nTEST 13 : LECTURE DES DISTANCES\n");
+  PILE liste_vocal_13 = init_PILE();
+  liste_vocal_13 = receptionVocal();
+  PILE liste_commande_13 = init_PILE();
+  choix_langue();
+  liste_commande_13 = recuperation_liste_commande(); //Commande
+
+  int action_13 = 0;
+  int distance_13 = 0;
+  
+  int test_13 = 0;
+  test_13 = detectMot(liste_vocal_13, liste_commande_13, &action_13, &distance_13, 5);
+  realisation_Action(liste_commande_13, action_13, distance_13);
+  printf("%d\n", distance_13);
 }
