@@ -355,10 +355,15 @@ int detectMot(PILE vocal, PILE commande, int *action, int *distance, int nb_mot)
         if (compare_ELEMENT(vocalmots.tab[i], commande.tab[j])){
           *action = j;
           detect = 1;
+          printf("Commande détecté : %s", commande.tab[j]);
 
           if (j==2 || j==6 || j==9 || j==13){
+
             *distance = atoi(vocal.tab[i+nb_mot]);
+
+            printf(" %d", *distance);
           }
+          printf("\n");
         }
       }
     }
@@ -390,7 +395,6 @@ int realisation_Action(PILE commande, int action, int distance)
       case  2 :
         //avance de
         ecriture_commande(avancer, distance);
-        printf("Commande détecté : ");
         affiche_ELEMENT(commande.tab[2]);
         break;
       case 3 :
@@ -502,7 +506,8 @@ void commande_vocal()
 
   while(!fin_commande_vocal){
 
-    int status = system("./Vocal");
+    int status = system("./Vocal.py");
+    printf("status = %d\n", status);
 
     // Vérification du résultat de l'exécution
     if (status == -1) {
