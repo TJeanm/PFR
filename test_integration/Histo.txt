@@ -1,0 +1,68 @@
+>> Le robot avance : Sat Jan 18 18:27:09 2025
+>> Le robot tourne à droite : Sat Jan 18 18:27:12 2025
+>> Le robot recule : Sat Jan 18 18:27:15 2025
+>> Le robot tourne à gauche : Sat Jan 18 18:27:16 2025
+>> Le robot avance : Sat Jan 18 18:27:18 2025
+>> Le robot tourne à droite : Sat Jan 18 18:27:18 2025
+>> Le robot tourne à droite : Sat Jan 18 18:27:19 2025
+>> Le robot avance : Sat Jan 18 18:27:19 2025
+>> Le robot avance : Sat Jan 18 18:27:20 2025
+>> Le robot avance : Sat Jan 18 18:27:20 2025
+>> Le robot avance : Sat Jan 18 18:27:20 2025
+>> Le robot avance : Sat Jan 18 18:27:21 2025
+>> Le robot tourne à droite : Sat Jan 18 18:27:21 2025
+>> Le robot tourne à gauche : Sat Jan 18 18:27:22 2025
+>> Le robot recule : Sat Jan 18 18:27:24 2025
+>> Le robot avance : Sat Jan 18 18:27:24 2025
+>> Le robot tourne à droite : Sat Jan 18 18:27:25 2025
+>> Le robot avance : Sun Jan 26 15:01:19 2025
+>> Le robot tourne à droite : Sun Jan 26 15:01:20 2025
+>> Le robot tourne à gauche : Sun Jan 26 15:01:22 2025
+>> Le robot avance : Sun Jan 26 15:01:22 2025
+>> Le robot recule : Sun Jan 26 15:01:24 2025
+>> Le robot tourne à droite : Sun Jan 26 15:01:24 2025
+>> Le robot avance : Sun Jan 26 15:01:25 2025
+>> Le robot tourne à droite : Sun Jan 26 15:01:25 2025
+>> Le robot tourne à droite : Sun Jan 26 15:01:25 2025
+>> Le robot tourne à droite : Sun Jan 26 15:01:26 2025
+>> Le robot avance : Sun Jan 26 15:01:26 2025
+>> Le robot recule : Sun Jan 26 15:01:26 2025
+>> Le robot avance : Sun Jan 26 15:01:27 2025
+>> Le robot avance : Sun Jan 26 15:03:25 2025
+>> Le robot tourne à droite : Sun Jan 26 15:03:26 2025
+>> Le robot avance : Sun Jan 26 15:03:26 2025
+>> Le robot tourne à droite : Sun Jan 26 15:03:26 2025
+>> Le robot avance : Sun Jan 26 15:06:04 2025
+>> Le robot tourne à droite : Sun Jan 26 15:06:05 2025
+>> Le robot avance : Sun Jan 26 15:06:05 2025
+>> Le robot tourne à gauche : Sun Jan 26 15:06:06 2025
+>> Le robot avance : Sun Jan 26 15:06:06 2025
+>> Le robot recule : Sun Jan 26 15:06:06 2025
+>> Le robot tourne à droite : Sun Jan 26 15:06:07 2025
+>> Le robot avance : Sun Jan 26 15:06:07 2025
+>> Le robot avance : Sun Jan 26 15:08:44 2025
+>> Le robot tourne à droite : Sun Jan 26 15:08:45 2025
+>> Le robot tourne à droite : Sun Jan 26 15:08:45 2025
+>> Le robot avance : Sun Jan 26 15:08:46 2025
+>> Le robot avance : Sun Jan 26 15:09:05 2025
+>> Le robot avance : Sun Jan 26 15:10:34 2025
+>> Le robot tourne à droite : Sun Jan 26 15:10:35 2025
+>> Le robot avance : Sun Jan 26 15:10:35 2025
+>> Le robot avance : Sun Jan 26 15:13:50 2025
+>> Le robot tourne à droite : Sun Jan 26 15:13:51 2025
+>> Le robot avance : Sun Jan 26 15:13:51 2025
+>> Le robot tourne à gauche : Sun Jan 26 15:13:52 2025
+>> Le robot avance : Sun Jan 26 15:13:52 2025
+>> Le robot recule : Sun Jan 26 15:13:52 2025
+>> Le robot tourne à droite : Sun Jan 26 15:13:53 2025
+>> Le robot avance : Sun Jan 26 15:13:53 2025
+>> Le robot avance : Sun Jan 26 15:18:44 2025
+>> Le robot tourne à droite : Sun Jan 26 15:18:44 2025
+>> Le robot avance : Sun Jan 26 15:18:44 2025
+>> Le robot avance : Sun Jan 26 15:19:25 2025
+>> Le robot tourne à droite : Sun Jan 26 15:19:25 2025
+>> Le robot avance : Sun Jan 26 15:19:25 2025
+>> Le robot tourne à gauche : Sun Jan 26 15:19:26 2025
+>> Le robot avance : Sun Jan 26 15:19:26 2025
+>> Le robot avance : Sun Jan 26 15:20:09 2025
+>> Le robot tourne à droite : Sun Jan 26 15:20:10 2025
