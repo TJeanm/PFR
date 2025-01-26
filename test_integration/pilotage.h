@@ -29,5 +29,6 @@ char lire_touche();
 
 void pilotage_manuel();
 
+void simulation();
 
 #endif

@@ -69,11 +69,10 @@ void pilotage_manuel() {
 #endif
 
     printf("Commandes: z (avancer), s (reculer), q (tourner à gauche), d (tourner à droite), x (quitter)\n");
+    FILE *fichier = fopen("Log_Deplacements.csv", "w");
     char touche='a';
     while (touche!='x') {
         touche = lire_touche(); // Lire une touche instantanément
-        printf("%c",touche);
-
 
         switch (touche) {
             case 'z':
@@ -99,7 +98,6 @@ void pilotage_manuel() {
             case 'x':
                 printf("Fin de la simulation.\n");
 
-
 #ifndef _WIN32
                 reinitialiser_terminal(); // Réinitialiser le terminal (Linux/macOS)
 #endif
@@ -113,4 +111,19 @@ void pilotage_manuel() {
         printf("Position actuelle: (%d, %d)\n", x, y);
         printf("Angle actuel: %d degrés\n", angle);
     }
+}
+
+
+void simulation () {
+    const char *command = "python3 simulateur.py";
+
+    // Exécution de la commande
+    int status = system(command);
+
+    if (status == -1) {
+        perror("Erreur lors de l'exécution de la commande");
+        printf("fichier non exécuté");
+    }
+
+    printf("Le script Python a été exécuté avec succès.\n");
 }

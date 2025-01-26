@@ -31,9 +31,9 @@ def simuler_mouvements():
         valeur = int(valeur)  # Convertir la valeur en entier
 
         if action == "Avancer":
-            robot.forward(valeur * 10)  # Avancer selon la valeur
+            robot.forward(valeur * 100)  # Avancer selon la valeur
         elif action == "Reculer":
-            robot.backward(valeur * 10)  # Reculer selon la valeur
+            robot.backward(valeur * 100)  # Reculer selon la valeur
         elif action == "Tourner à gauche":
             robot.left(45)  # Tourner à gauche
         elif action == "Tourner à droite":

@@ -62,7 +62,7 @@ void menu_principal(){
     int a=appel();
     switch (a){
         case 0:
-            printf("Sortie du programme");
+            printf("Sortie du programme\n");
             exit(0);
         case 1 :
             mode_utilisateur();
@@ -171,17 +171,7 @@ void modif_mode_manuel(){
 
 void mode_manuel() {
     pilotage_manuel();
-    const char *command = "python3 simulateur.py";
-
-    // Exécution de la commande
-    int status = system(command);
-
-    if (status == -1) {
-        perror("Erreur lors de l'exécution de la commande");
-        printf("fichier non exécuté");
-    }
-
-    printf("Le script Python a été exécuté avec succès.\n");
+    simulation();
     menu_principal();
 }
 
