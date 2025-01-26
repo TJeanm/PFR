@@ -171,6 +171,17 @@ void modif_mode_manuel(){
 
 void mode_manuel() {
     pilotage_manuel();
+    const char *command = "python3 simulateur.py";
+
+    // Exécution de la commande
+    int status = system(command);
+
+    if (status == -1) {
+        perror("Erreur lors de l'exécution de la commande");
+        printf("fichier non exécuté");
+    }
+
+    printf("Le script Python a été exécuté avec succès.\n");
     menu_principal();
 }
 

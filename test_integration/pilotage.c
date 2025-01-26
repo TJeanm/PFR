@@ -1,6 +1,7 @@
 #include "pilotage.h"
 #include <math.h>
 
+
 // Compteur global pour suivre le nombre total d'actions
 int compteur_actions = 0;
 
@@ -97,6 +98,8 @@ void pilotage_manuel() {
 
             case 'x':
                 printf("Fin de la simulation.\n");
+
+
 #ifndef _WIN32
                 reinitialiser_terminal(); // Réinitialiser le terminal (Linux/macOS)
 #endif
