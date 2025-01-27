@@ -489,6 +489,7 @@ void commande_vocal()
     }
     else{
       printf("Lecture : \n");
+      
       // Exécution de la commande
       int status = system(command);
       if (status == -1) {
@@ -505,10 +506,15 @@ void commande_vocal()
       }
   
       liste_vocal = receptionVocal();
-      action_detecte = detectMot(liste_vocal, liste_commande, &action, &distance, 5);
+      int nb_mot = 5; 
+      if (liste_vocal.tete < nb_mot) 
+        nb_mot = liste_vocal.tete; 
+
+      action_detecte = detectMot(liste_vocal, liste_commande, &action, &distance, nb_mot);
       if (action_detecte){
         fin_commande_vocal = realisation_Action(liste_commande, action, distance);
-        simulation_vocal();
+        if (!fin_commande_vocal)
+          simulation_vocal();
       }else {
         printf("Aucune action détecté !\n");
       }
