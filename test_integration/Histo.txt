@@ -116,3 +116,36 @@
 >> Le robot avance : Mon Jan 27 13:52:27 2025
 >> Le robot avance : Mon Jan 27 13:52:27 2025
 >> Le robot recule : Mon Jan 27 13:52:27 2025
+>> Le robot avance : Mon Jan 27 14:07:38 2025
+>> Le robot tourne à gauche : Mon Jan 27 14:07:38 2025
+>> Le robot recule : Mon Jan 27 14:07:39 2025
+>> Le robot tourne à droite : Mon Jan 27 14:07:39 2025
+>> Le robot avance : Mon Jan 27 14:07:39 2025
+>> Le robot tourne à gauche : Mon Jan 27 14:07:39 2025
+>> Le robot recule : Mon Jan 27 14:07:39 2025
+>> Le robot tourne à droite : Mon Jan 27 14:07:39 2025
+>> Le robot avance : Mon Jan 27 14:08:33 2025
+>> Le robot tourne à droite : Mon Jan 27 14:08:33 2025
+>> Le robot recule : Mon Jan 27 14:08:34 2025
+>> Le robot tourne à droite : Mon Jan 27 14:08:34 2025
+>> Le robot tourne à gauche : Mon Jan 27 14:08:34 2025
+>> Le robot avance : Mon Jan 27 14:08:34 2025
+>> Le robot recule : Mon Jan 27 14:08:34 2025
+>> Le robot tourne à droite : Mon Jan 27 14:08:34 2025
+>> Le robot recule : Mon Jan 27 14:08:34 2025
+>> Le robot tourne à droite : Mon Jan 27 14:08:35 2025
+>> Le robot avance : Mon Jan 27 14:24:34 2025
+>> Le robot tourne à droite : Mon Jan 27 14:24:34 2025
+>> Le robot tourne à gauche : Mon Jan 27 14:24:34 2025
+>> Le robot recule : Mon Jan 27 14:24:35 2025
+>> Le robot tourne à droite : Mon Jan 27 14:24:35 2025
+>> Le robot avance : Mon Jan 27 14:24:35 2025
+>> Le robot avance : Mon Jan 27 14:26:01 2025
+>> Le robot tourne à droite : Mon Jan 27 14:26:02 2025
+>> Le robot avance : Mon Jan 27 14:26:02 2025
+>> Le robot tourne à droite : Mon Jan 27 14:26:02 2025
+>> Le robot avance : Mon Jan 27 14:26:03 2025
+>> Le robot avance : Mon Jan 27 14:27:48 2025
+>> Le robot tourne à gauche : Mon Jan 27 14:27:49 2025
+>> Le robot avance : Mon Jan 27 14:27:49 2025
+>> Le robot avance : Mon Jan 27 14:27:49 2025

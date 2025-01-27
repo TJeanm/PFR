@@ -92,7 +92,7 @@ void mode_administrateur (){
 }
 
 void mode_utilisateur(){
-    printf("Quel mode de commande souhaitez vous ? \n 0 : Quitter \n 1 : Retour \n 2 : Mode manuel \n 3 : Mode vocal \n 4 : Mode automatique \n");
+    printf("Quel mode de commande souhaitez vous ? \n 0 : Quitter \n 1 : Retour \n 2 : Mode manuel \n 3 : Mode vocal \n");
     int utilisateur =appel();
     switch (utilisateur){
         case 0:
@@ -106,9 +106,6 @@ void mode_utilisateur(){
             break;
         case 3:
             mode_vocal();
-            break;
-        case 4:
-            mode_auto();
             break;
     }
 }
@@ -177,9 +174,6 @@ void mode_vocal(){
     printf("test vocal");
 }
 
-void mode_auto(){
-    printf("test auto");
-}
 
 int main() {
     menu_principal();

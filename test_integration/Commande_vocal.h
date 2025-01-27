@@ -63,7 +63,7 @@ PILE ligne_to_PILE(PILE p,char chaine[], char * delimitateur);
 #define MAX_LANGUES 5
 #define MAX_COMMANDES 400
 
-#define DISTANCE_INIT 10
+#define DISTANCE_INIT 20
 #define ANGLE_INIT 90
 #define DEMI_TOUR 180
 
