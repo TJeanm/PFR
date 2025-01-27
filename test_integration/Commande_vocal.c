@@ -480,30 +480,38 @@ void commande_vocal()
   char *command = "python3 Vocal.py";
 
   while(!fin_commande_vocal){
-
-    
-    // Exécution de la commande
-    int status = system(command);
-    if (status == -1) {
-        perror("Erreur lors de l'exécution de la commande");
-        printf("fichier non exécuté");
+    printf("Tapez 9 pour parler ou 0 pour quitter\n");
+    int parler;
+    scanf("%d",&parler);
+    if(parler != 9){
+      printf("Fin du mode vocale \n");
+      fin_commande_vocal = 1;
     }
-    printf("Le script Python a été exécuté avec succès.\n");
-
-    // Vérification du résultat de l'exécution
-    if (status == -1) {
-        perror("Erreur lors de l'exécution du programme");
-    } else {
-        printf("Programme exécuté avec succès.\n");
-    }
-
-    liste_vocal = receptionVocal();
-    action_detecte = detectMot(liste_vocal, liste_commande, &action, &distance, 5);
-    if (action_detecte){
-      fin_commande_vocal = realisation_Action(liste_commande, action, distance);
-      simulation_vocal();
-    }else {
-      printf("Aucune action détecté !\n");
+    else{
+      printf("Lecture : \n");
+      // Exécution de la commande
+      int status = system(command);
+      if (status == -1) {
+          perror("Erreur lors de l'exécution de la commande");
+          printf("fichier non exécuté");
+      }
+      printf("Le script Python a été exécuté avec succès.\n");
+  
+      // Vérification du résultat de l'exécution
+      if (status == -1) {
+          perror("Erreur lors de l'exécution du programme");
+      } else {
+          printf("Programme exécuté avec succès.\n");
+      }
+  
+      liste_vocal = receptionVocal();
+      action_detecte = detectMot(liste_vocal, liste_commande, &action, &distance, 5);
+      if (action_detecte){
+        fin_commande_vocal = realisation_Action(liste_commande, action, distance);
+        simulation_vocal();
+      }else {
+        printf("Aucune action détecté !\n");
+      }
     }
   }
 }
