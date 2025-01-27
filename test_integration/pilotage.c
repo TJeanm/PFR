@@ -114,7 +114,7 @@ void pilotage_manuel() {
 }
 
 
-void simulation () {
+void simulation_manuel () {
     const char *command = "python3 simulateur.py";
 
     // Exécution de la commande

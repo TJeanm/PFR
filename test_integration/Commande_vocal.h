@@ -83,5 +83,6 @@ int realisation_Action(PILE commande, int action, int distance);
 
 void commande_vocal();
 
+void simulation_vocal();
 
 #endif

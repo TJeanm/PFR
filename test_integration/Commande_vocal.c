@@ -504,3 +504,17 @@ void commande_vocal()
     }
   }
 }
+
+void simulation_vocal () {
+    const char *command = "python3 visualisation_turtle.py";
+
+    // Exécution de la commande
+    int status = system(command);
+
+    if (status == -1) {
+        perror("Erreur lors de l'exécution de la commande");
+        printf("fichier non exécuté");
+    }
+
+    printf("Le script Python a été exécuté avec succès.\n");
+}
