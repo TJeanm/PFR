@@ -15,3 +15,6 @@ Commande_vocal.o: Commande_vocal.c Commande_vocal.h
 # Lier les objets pour créer l'exécutable
 programme: main.o interface.o pilotage.o Commande_vocal.o
 	gcc main.o interface.o pilotage.o Commande_vocal.o -o programme -lm
+
+clean:
+	rm -rf *.o

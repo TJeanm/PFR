@@ -4,10 +4,6 @@ const char *nom_fichier = "../Config/mdp.txt";
 int nombre_tentatives =0;
 int mdp;
 
-int main() {
-    menu_principal();
-    return 0;
-}
 
 int appel(){
     int nombre;
@@ -166,17 +162,26 @@ void modif_mdp(const char *nom_fichier) {
 }
 
 void modif_mode_vocal(){
+    printf("test modif vocal");
 }
 
 void modif_mode_manuel(){
+    printf("test modif manuel");
 }
 
 void mode_manel(){
+    printf("test manuel");
 }
 
 void mode_vocal(){
+    printf("test vocal");
 }
 
 void mode_auto(){
+    printf("test auto");
 }
 
+int main() {
+    menu_principal();
+    return 0;
+}
