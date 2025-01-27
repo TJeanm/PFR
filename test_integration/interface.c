@@ -180,7 +180,7 @@ void mode_vocal(){
     printf("Début des tests\n\n");
     commande_vocal();
     printf("\nFin des tests\n");
-    simulation_vocal();
+    //simulation_vocal();
     menu_principal();
 
 }
