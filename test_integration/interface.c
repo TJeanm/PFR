@@ -1,5 +1,6 @@
 #include "interface.h"
 #include "pilotage.h"
+#include "Commande_vocal.h"
 
 const char *nom_fichier = "mdp.txt";
 int nombre_tentatives =0;
@@ -176,6 +177,9 @@ void mode_manuel() {
 }
 
 void mode_vocal(){
+    printf("Début des tests\n\n");
+    commande_vocal();
+    printf("\nFin des tests\n");
 }
 
 void mode_auto(){

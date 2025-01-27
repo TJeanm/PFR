@@ -79,3 +79,9 @@
 >> Le robot tourne à droite : Sun Jan 26 23:32:31 2025
 >> Le robot avance : Sun Jan 26 23:32:32 2025
 >> Le robot avance : Sun Jan 26 23:32:32 2025
+>> Le robot avance : Mon Jan 27 01:34:12 2025
+>> Le robot tourne à droite : Mon Jan 27 01:34:13 2025
+>> Le robot tourne à droite : Mon Jan 27 01:34:13 2025
+>> Le robot avance : Mon Jan 27 01:34:14 2025
+>> Le robot tourne à gauche : Mon Jan 27 01:34:14 2025
+>> Le robot avance : Mon Jan 27 01:34:14 2025
