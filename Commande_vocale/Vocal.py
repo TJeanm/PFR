@@ -32,13 +32,18 @@ numero, langue = lire_choix_langue("choix_langue.txt")
 code_langue = obtenir_code_langue(langue)
 print(f"Langue choisie : {langue} (code : {code_langue})")
 
-r = sr.Recognizer()
-micro = sr.Microphone()
-with micro as source:
-    print("Speak!")
-    audio_data = r.listen(source)
-    print("End!")
 
-result = r.recognize_google(audio_data, language=code_langue)
-ecrire_commande_fichier(result)
-print ("Vous avez dit : ", result)
+
+try :
+    r = sr.Recognizer()
+    micro = sr.Microphone()
+    with micro as source:
+        print("Speak!")
+        audio_data = r.listen(source)
+        print("End!")
+        
+    result = r.recognize_google(audio_data, language=code_langue)
+    ecrire_commande_fichier(result)
+    print ("Vous avez dit : ", result)
+except Exception as e : 
+    print("pb")
