@@ -362,12 +362,12 @@ int realisation_Action(PILE commande, int action, int distance)
     switch(action){
       case 1 :
         //avance
-        ecriture_commande(avancer, DISTANCE_INIT);
+        //ecriture_commande(avancer, DISTANCE_INIT);
         affiche_ELEMENT(commande.tab[1]);
         break;
       case  2 :
         //avance de
-        ecriture_commande(avancer, distance);
+        //ecriture_commande(avancer, distance);
         affiche_ELEMENT(commande.tab[2]);
         break;
       case 3 :
@@ -380,12 +380,12 @@ int realisation_Action(PILE commande, int action, int distance)
         break;
       case 5 :
         //recule
-        ecriture_commande(avancer, -DISTANCE_INIT);
+        //ecriture_commande(avancer, -DISTANCE_INIT);
         affiche_ELEMENT(commande.tab[5]);
         break;
       case 6 :
         //recule de
-        ecriture_commande(avancer, -distance);
+        //ecriture_commande(avancer, -distance);
         affiche_ELEMENT(commande.tab[6]);
         break;
       case 7 :
@@ -394,12 +394,12 @@ int realisation_Action(PILE commande, int action, int distance)
         break;
       case 8 :
         //tourne à droite
-        ecriture_commande(droite, ANGLE_INIT);
+        //ecriture_commande(droite, ANGLE_INIT);
         affiche_ELEMENT(commande.tab[8]);
         break;
       case 9 :
         //tourne à droite de
-        ecriture_commande(droite, distance);
+        //ecriture_commande(droite, distance);
         affiche_ELEMENT(commande.tab[9]);
         break;
       case 10 :
@@ -408,12 +408,12 @@ int realisation_Action(PILE commande, int action, int distance)
         break;
       case 11 :
         //tourne à gauche
-        ecriture_commande(gauche, ANGLE_INIT);
+        //ecriture_commande(gauche, ANGLE_INIT);
         affiche_ELEMENT(commande.tab[11]);
         break;
       case 12 :
         //tourne à gauche de
-        ecriture_commande(gauche, distance);
+        //ecriture_commande(gauche, distance);
         affiche_ELEMENT(commande.tab[12]);
         break;
       case 13 :
@@ -426,7 +426,7 @@ int realisation_Action(PILE commande, int action, int distance)
         break;
       case 15 :
         //fait un demi tour
-        ecriture_commande(droite, DEMI_TOUR);
+        //ecriture_commande(droite, DEMI_TOUR);
         affiche_ELEMENT(commande.tab[15]);
         break;
       case 16 :
@@ -476,10 +476,11 @@ void commande_vocal()
   int action;
   int distance;
   int action_detecte;
+  char *command = "python3 Vocal.py";
 
-  while(!fin_commande_vocal){
+  while(fin_commande_vocal){
 
-    const char *command = "python3 Vocal.py";
+    
     // Exécution de la commande
     int status = system(command);
     if (status == -1) {
@@ -499,6 +500,7 @@ void commande_vocal()
     action_detecte = detectMot(liste_vocal, liste_commande, &action, &distance, 5);
     if (action_detecte){
       fin_commande_vocal = realisation_Action(liste_commande, action, distance);
+      simulation_vocal();
     }else {
       printf("Aucune action détecté !\n");
     }
