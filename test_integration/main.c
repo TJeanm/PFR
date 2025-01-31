@@ -1,6 +1,6 @@
-#include "pilotage.h"
-#include "interface.h"
-#include "Commande_vocal.h"
+#include "pilotage_manuel/pilotage.h"
+#include "interface/interface.h"
+#include "commande_vocale/commande_vocale.h"
 
 int main() {
     menu_principal();
