@@ -127,6 +127,9 @@ PILE saisir_PILE()
   return pile;
 }
 
+// ligne_to_pile reçois en parametre une chaine de cararctère et un délimitateur, " " ou ";" dans le programme.
+// la fonction va ensuite séparer dans un élément différent à chaque délimiteteur qu'il rencontrera
+// La fonction retourne alors une pile d'élément de la chaine séparé par le délimiteteur
 PILE ligne_to_PILE(PILE p,char chaine[], char * delimitateur)
 {
   int i = 0;
@@ -148,7 +151,9 @@ PILE ligne_to_PILE(PILE p,char chaine[], char * delimitateur)
   return p;
 }
 
-
+// recuperation_liste_commande va d'abort récuperer le choix qu'il a été fait sur la langue voulu, puis il va récuperer la liste des commandes réalisable sur un autre fichier
+// il va les mettrent sous la forme d'une pile
+// La fonction retourne alors la pile de commande réalisble
 PILE recuperation_liste_commande()
 {
   FILE *fichier_choix = fopen("commande_vocale/choix_langue.txt", "r");
@@ -181,6 +186,10 @@ PILE recuperation_liste_commande()
   return liste_commande;
 }
 
+
+// choix_langue va récupérer les listes de commande réalisable de toutes les langues pour ensuite proposer à l'utilisateur les langues possible à exécuter
+// Ensuite la fonction va ecrire dans un nouveau fichier le choix de l'utilisateur
+// La fonction retourne rien au programme
 void choix_langue()
 {
   FILE *fichier = fopen("commande_vocale/liste_commande_vocal.csv", "r");
@@ -218,6 +227,8 @@ void choix_langue()
   }
 }
 
+// receptionVocal va récupérer ce que l'utilisateur à dit puis va mettre la chaine de caractere sous la forme d'une pile
+// La fonction retourne alors la pile
 PILE receptionVocal()
 {
   FILE *fichier = fopen("commande_vocale/ligne_vocal.txt", "r");
@@ -237,6 +248,9 @@ PILE receptionVocal()
   return recept_vocal;
 }
 
+// ecriture_commande récupére le 
+// Ensuite la fonction va ecrire dans un nouveau fichier le choix de l'utilisateur
+// La fonction retourne rien au programme
 void ecriture_commande(char action[20], int distance)
 {
   FILE *fichier_simu_LECTURE = fopen("Transmission_to_simulation.csv", "r");
