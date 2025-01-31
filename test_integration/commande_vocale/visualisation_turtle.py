@@ -4,7 +4,7 @@ import csv
 screen=Screen()
 
 
-with open('Transmission_to_simulation.csv', 'r') as file:
+with open("commande_vocale/Transmission_to_simulation.csv", 'r') as file:
     reader = csv.reader(file, delimiter=';')
     index=0
     for row in reader:

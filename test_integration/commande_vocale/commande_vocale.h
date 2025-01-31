@@ -1,4 +1,4 @@
-#ifndef __COMMANDE_VOCAL_H__
+#ifndef __COMMANDE_VOCALE_H__
 #define __COMMANDE_VOCALE_H__
 
 #include <stdio.h>
