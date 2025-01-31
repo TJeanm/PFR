@@ -1,0 +1,186 @@
+Script started on Mon Jan 27 16:42:58 2025
+[1m[7m%[27m[1m[0m                                                                                                                                                                             ]7;file://MacBook-Air-de-Theo-4.local/Users/theojeanmart/Documents/1A/PFR/PFR/test_integration[0m[27m[24m[Jtheojeanmart@MacBook-Air-de-Theo-4 test_integration % [K[?2004h./programme[11Dwhich python3
+[K[K[A[54C[1B[A[54C./programme  [1B[K[A[65C[11D           [11Dmmake programme[1m [0m[0m [?2004l[1Bgcc -c main.c
+In file included from main.c:3:
+[1m./Commande_vocal.h:1:9: [0m[0;1;35mwarning: [0m[1m'__COMMANDE_VOCAL_H__' is used as a header guard here, followed by #define of a different macro [-Wheader-guard][0m
+    1 | #ifndef __COMMANDE_VOCAL_H__[0m
+      | [0;1;32m        ^~~~~~~~~~~~~~~~~~~~
+[0m[1m./Commande_vocal.h:2:9: [0m[0;1;30mnote: [0m'__COMMANDE_VOCALE_H__' is defined here; did you mean '__COMMANDE_VOCAL_H__'?[0m
+    2 | #define __COMMANDE_VOCALE_H__[0m
+      | [0;1;32m        ^~~~~~~~~~~~~~~~~~~~~
+[0m      | [0;32m        __COMMANDE_VOCAL_H__
+[0m1 warning generated.
+gcc -c interface.c
+In file included from interface.c:3:
+[1m./Commande_vocal.h:1:9: [0m[0;1;35mwarning: [0m[1m'__COMMANDE_VOCAL_H__' is used as a header guard here, followed by #define of a different macro [-Wheader-guard][0m
+    1 | #ifndef __COMMANDE_VOCAL_H__[0m
+      | [0;1;32m        ^~~~~~~~~~~~~~~~~~~~
+[0m[1m./Commande_vocal.h:2:9: [0m[0;1;30mnote: [0m'__COMMANDE_VOCALE_H__' is defined here; did you mean '__COMMANDE_VOCAL_H__'?[0m
+    2 | #define __COMMANDE_VOCALE_H__[0m
+      | [0;1;32m        ^~~~~~~~~~~~~~~~~~~~~
+[0m      | [0;32m        __COMMANDE_VOCAL_H__
+[0m1 warning generated.
+gcc -c pilotage.c
+gcc -c Commande_vocal.c
+In file included from Commande_vocal.c:1:
+[1m./Commande_vocal.h:1:9: [0m[0;1;35mwarning: [0m[1m'__COMMANDE_VOCAL_H__' is used as a header guard here, followed by #define of a different macro [-Wheader-guard][0m
+    1 | #ifndef __COMMANDE_VOCAL_H__[0m
+      | [0;1;32m        ^~~~~~~~~~~~~~~~~~~~
+[0m[1m./Commande_vocal.h:2:9: [0m[0;1;30mnote: [0m'__COMMANDE_VOCALE_H__' is defined here; did you mean '__COMMANDE_VOCAL_H__'?[0m
+    2 | #define __COMMANDE_VOCALE_H__[0m
+      | [0;1;32m        ^~~~~~~~~~~~~~~~~~~~~
+[0m      | [0;32m        __COMMANDE_VOCAL_H__
+[0m[1mCommande_vocal.c:44:7: [0m[0;1;35mwarning: [0m[1mexpression result unused [-Wunused-value][0m
+   44 |   for(i; i<MAX_LETTRES; i++){[0m
+      | [0;1;32m      ^
+[0m[1mCommande_vocal.c:52:7: [0m[0;1;35mwarning: [0m[1mexpression result unused [-Wunused-value][0m
+   52 |   for(i; i<MAX_LETTRES-nb_char_elem1; i++){[0m
+      | [0;1;32m      ^
+[0m3 warnings generated.
+gcc main.o interface.o pilotage.o Commande_vocal.o -o programme -lm
+[1m[7m%[27m[1m[0m                                                                                                                                                                             ]7;file://MacBook-Air-de-Theo-4.local/Users/theojeanmart/Documents/1A/PFR/PFR/test_integration[0m[27m[24m[Jtheojeanmart@MacBook-Air-de-Theo-4 test_integration % [K[?2004hmake programme[14D./[3P[9C   [?2004l
+Que souhaitez vous faire ? 
+ 0 : Quitter 
+ 1 : Mode utilisateur 
+ 2 : Mode administrateur 
+2
+Entrez le mot de passe : hbgku
+Mot de passe incorrect.
+Entrez le mot de passe : kug
+Mot de passe incorrect.
+Entrez le mot de passe : kuh
+Mot de passe incorrect.
+Nombre maximal de tentatives atteintes, retour au menu principal
+Que souhaitez vous faire ? 
+ 0 : Quitter 
+ 1 : Mode utilisateur 
+ 2 : Mode administrateur 
+2
+Entrez le mot de passe : pfr2025
+Mot de passe correct !
+Que souhaitez vous faire ? 
+ 0 : Quitter 
+ 1 : Retour 
+ 2 : Changer le mot de passe 
+ 3 : Changer les paramètres du mode vocal 
+ 4 : Changer les paramètres du mode manuel 
+2
+Pour modifier le mot de passe, Entrez le mot de passe : pfr2025
+Mot de passe correct !
+Entrez le nouveau mot de passe : PFR2025
+Mot de passe modifié avec succès.
+Que souhaitez vous faire ? 
+ 0 : Quitter 
+ 1 : Retour 
+ 2 : Changer le mot de passe 
+ 3 : Changer les paramètres du mode vocal 
+ 4 : Changer les paramètres du mode manuel 
+1
+Que souhaitez vous faire ? 
+ 0 : Quitter 
+ 1 : Mode utilisateur 
+ 2 : Mode administrateur 
+1
+Quel mode de commande souhaitez vous ? 
+ 0 : Quitter 
+ 1 : Retour 
+ 2 : Mode manuel 
+ 3 : Mode vocal 
+ 4 : Mode automatique 
+2
+Commandes: z (avancer), s (reculer), q (tourner à gauche), d (tourner à droite), x (quitter)
+Position actuelle: (11, 10)
+Angle actuel: 0 degrés
+Position actuelle: (11, 10)
+Angle actuel: 315 degrés
+Position actuelle: (12, 11)
+Angle actuel: 315 degrés
+Position actuelle: (12, 11)
+Angle actuel: 270 degrés
+Position actuelle: (12, 12)
+Angle actuel: 270 degrés
+Position actuelle: (12, 12)
+Angle actuel: 315 degrés
+Position actuelle: (13, 13)
+Angle actuel: 315 degrés
+Fin de la simulation.
+Position actuelle: (13, 13)
+Angle actuel: 315 degrés
+2025-01-27 16:47:56.368 Python[45578:576031] +[IMKClient subclass]: chose IMKClient_Modern
+2025-01-27 16:47:56.368 Python[45578:576031] +[IMKInputSession subclass]: chose IMKInputSession_Modern
+Le script Python a été exécuté avec succès.
+Que souhaitez vous faire ? 
+ 0 : Quitter 
+ 1 : Mode utilisateur 
+ 2 : Mode administrateur 
+1
+Quel mode de commande souhaitez vous ? 
+ 0 : Quitter 
+ 1 : Retour 
+ 2 : Mode manuel 
+ 3 : Mode vocal 
+ 4 : Mode automatique 
+3
+Début des tests
+
+
+Selectionner la langue désiré :
+  1 = Français
+  2 = English
+1
+Tapez 9 pour parler ou 0 pour quitter
+9
+Lecture : 
+Langue choisie : Français (code : fr-FR)
+Speak!
+End!
+Vous avez dit :  robot avance de 9
+Le script Python a été exécuté avec succès.
+Programme exécuté avec succès.
+robot avance de 9
+2025-01-27 16:51:31.853 Python[45601:578530] +[IMKClient subclass]: chose IMKClient_Modern
+2025-01-27 16:51:31.853 Python[45601:578530] +[IMKInputSession subclass]: chose IMKInputSession_Modern
+['avancer', '20', '60', '0']
+avancer
+20
+60
+test avancer
+ Le script Python a été exécuté avec succès.
+Tapez 9 pour parler ou 0 pour quitter
+9
+Lecture : 
+Langue choisie : Français (code : fr-FR)
+Speak!
+End!
+Vous avez dit :  la robot avance de 30 s'il te plaît
+Le script Python a été exécuté avec succès.
+Programme exécuté avec succès.
+la robot avance de 30 s'il te plaît
+ Commande détecté : avance de 30
+2025-01-27 16:52:49.962 Python[45609:579371] +[IMKClient subclass]: chose IMKClient_Modern
+2025-01-27 16:52:49.962 Python[45609:579371] +[IMKInputSession subclass]: chose IMKInputSession_Modern
+['avancer', '30', '61', '0']
+avancer
+30
+61
+test avancer
+Le script Python a été exécuté avec succès.
+Tapez 9 pour parler ou 0 pour quitter
+0
+Fin du mode vocale 
+
+Fin des tests
+Que souhaitez vous faire ? 
+ 0 : Quitter 
+ 1 : Mode utilisateur 
+ 2 : Mode administrateur 
+0
+Sortie du programme
+[1m[7m%[27m[1m[0m                                                                                                                                                                             ]7;file://MacBook-Air-de-Theo-4.local/Users/theojeanmart/Documents/1A/PFR/PFR/test_integration[0m[27m[24m[Jtheojeanmart@MacBook-Air-de-Theo-4 test_integration % [K[?2004heexit[?2004l
+
+Saving session...
+...copying shared history...
+...saving history...truncating history files...
+...completed.
+
+Script done on Mon Jan 27 17:15:56 2025

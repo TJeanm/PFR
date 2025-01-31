@@ -144,8 +144,9 @@ void modif_mdp(const char *nom_fichier) {
     FILE *fichier;
 
     printf("Pour modifier le mot de passe, ");
-    verif_mdp(nom_fichier);
-    printf("Entrez le nouveau mot de passe : ");
+    int x=verif_mdp(nom_fichier);
+    if (x==1){
+        printf("Entrez le nouveau mot de passe : ");
     scanf("%9s", nouveau_mdp);
 
     // Ouvrir le fichier en mode écriture
@@ -162,6 +163,13 @@ void modif_mdp(const char *nom_fichier) {
     fclose(fichier);
 
     printf("Mot de passe modifié avec succès.\n");
+    }
+    else{
+        printf("Mot de passe incorrect.\n");
+        actions_administrateur();
+    }
+
+    
 }
 
 void modif_mode_vocal(){
