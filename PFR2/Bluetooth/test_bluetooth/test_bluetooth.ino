@@ -5,6 +5,7 @@ SoftwareSerial HM10(2, 3); // RX, TX
 void setup() {
   Serial.begin(115200);  // Moniteur sÃ©rie
   HM10.begin(115200);    // Bluetooth HM-10
+  
   Serial.println("Initialisation terminée !");
 }
 
@@ -16,7 +17,7 @@ void loop() {
     Serial.print("Message complet reçu : ");
     Serial.println(received);
     
-    // RÃ©ponse longue (simule une vraie rÃ©ponse)
+    // Réponse longue (simule une vraie rÃ©ponse)
     String response = received + " AAAAA batard woula";
     
     sendChunked(response, 36); // Envoie la rÃ©ponse en morceaux de 32 caractÃ¨res
