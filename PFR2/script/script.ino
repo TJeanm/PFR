@@ -6,21 +6,27 @@
 #define borneENB        5       // On associe la borne "ENB" du L298N à la pin D5 de l'arduino
 
 // Définition des broches pour les capteurs ultrasons
-#define FRONT_TRIGGER 22
-#define FRONT_ECHO    23
+#define FRONT_TRIGGER1 22
+#define FRONT_ECHO1    23
+#define FRONT_TRIGGER2 26
+#define FRONT_ECHO2    27
 #define REAR_TRIGGER  24
 #define REAR_ECHO     25
 
 // Seuil en centimètres pour détecter un obstacle
-const int DISTANCE_SEUIL = 20;
+const int DISTANCE_SEUIL = 40;
 
 // Durée du signal trigger (en microsecondes)
 const int TRIGGER_PULSE = 10;
 
+const int VITESSE=170;
+
 void setup() {
   // Initialisation des broches des capteurs ultrasons
-  pinMode(FRONT_TRIGGER, OUTPUT);
-  pinMode(FRONT_ECHO, INPUT);
+  pinMode(FRONT_TRIGGER1, OUTPUT);
+  pinMode(FRONT_ECHO1, INPUT);
+  pinMode(FRONT_TRIGGER2, OUTPUT);
+  pinMode(FRONT_ECHO2, INPUT);
   pinMode(REAR_TRIGGER, OUTPUT);
   pinMode(REAR_ECHO, INPUT);
 
@@ -56,10 +62,8 @@ void reculer() {
   digitalWrite(borneIN2, LOW);
   digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, LOW); 
-  digitalWrite(borneENA, HIGH);
-  digitalWrite(borneENB, HIGH);  
   
-  Serial.println("Avancer");
+  Serial.println("Reculer");
 }
 
 void avancer() {
@@ -68,31 +72,46 @@ void avancer() {
   digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
   digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, HIGH);
-  digitalWrite(borneENA, HIGH);
-  digitalWrite(borneENB, HIGH); 
+  analogWrite(borneENA, VITESSE);
+  analogWrite(borneENB, VITESSE); 
 
-  Serial.println("Reculer");
+  Serial.println("Avancer");
 }
 
-void tourner() {
+void droite() {
   // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
   digitalWrite(borneIN1, HIGH);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN2, LOW);                 // L'entrée IN2 doit être au niveau haut
   digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
-  digitalWrite(borneIN4, HIGH);
-  digitalWrite(borneENA, HIGH);
-  digitalWrite(borneENB, HIGH); 
-  delay(1000);
-  digitalWrite(borneENA, LOW);
-  digitalWrite(borneENB, LOW); 
+  digitalWrite(borneIN4, HIGH); 
+  analogWrite(borneENA, 200);
+  analogWrite(borneENB, 200); 
+  delay(1100);
   
-  Serial.println("Tourner");
+  Serial.println("Tourner à droite");
+}
+
+void gauche() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, LOW); 
+  analogWrite(borneENA, 200);
+  analogWrite(borneENB, 200); 
+  delay(1100);
+  
+  Serial.println("Tourner à gauche");
 }
 
 void arreter() {
   // Désactiver tous les moteurs
+  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, LOW);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, LOW);
   digitalWrite(borneENA, LOW);
-  digitalWrite(borneENB, LOW); 
+  digitalWrite(borneENB, LOW);  
   
   
   Serial.println("Arrêt");
@@ -101,39 +120,43 @@ void arreter() {
 
 void loop() {
   // Mesure des distances
-  long distanceFront = getDistance(FRONT_TRIGGER, FRONT_ECHO);
+  
+  long distanceFront1 = getDistance(FRONT_TRIGGER1, FRONT_ECHO1);
+  long distanceFront2 = getDistance(FRONT_TRIGGER2, FRONT_ECHO2);
   long distanceRear  = getDistance(REAR_TRIGGER, REAR_ECHO);
   
   // Affichage pour debug
-  Serial.print("Avant: ");
-  Serial.print(distanceFront);
+  Serial.print("Avant 1: ");
+  Serial.print(distanceFront1);
+  Serial.print(" cm  |  Avant 2 : ");
+  Serial.print(distanceFront2);
   Serial.print(" cm  |  Arrière: ");
   Serial.print(distanceRear);
   Serial.println(" cm");
   
   // Si aucun obstacle devant (distance > seuil), avancer
-  if (distanceFront > DISTANCE_SEUIL || distanceFront == 0) {
+  if (distanceFront1 > DISTANCE_SEUIL || distanceFront1 == 0 && distanceFront1 > DISTANCE_SEUIL || distanceFront1 == 0) {
     avancer();
+    if (distanceFront1 < DISTANCE_SEUIL && distanceFront1 != 0 || distanceFront1 < DISTANCE_SEUIL && distanceFront1 != 0) {
+      reculer();
+      delay(400);
+      droite();
+    }
   } 
   else {
-    arreter();
-    delay(1000);
-    // Obstacle détecté à l'avant
-    // Vérifier que l'arrière est dégagé pour reculer
-    if (distanceRear > DISTANCE_SEUIL || distanceRear == 0) {
-      reculer();
-      tourner();
-    } 
-    else {
-      // Aucun espace pour reculer : tourner sur place puis repartir
-      tourner();
-    }
+    reculer();
+    delay(400);
+    droite();
   }
   
   // Petite pause pour ne pas saturer le bus série et laisser le temps aux moteurs
   delay(100);
 }
-
+void changeVitesseMoteur(int nouvelleVitesse) {
+  
+  // Génère un signal PWM permanent, de rapport cyclique égal à "nouvelleVitesse" (valeur comprise entre 0 et 255)
+  analogWrite(borneENA, nouvelleVitesse);
+}
 
 
 
