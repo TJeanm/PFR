@@ -25,24 +25,24 @@ try:
         pygame.event.pump()
         transmission = ""
         for i in range(joystick.get_numbuttons()):
-            if ((i >= 0 and i <= 3) or (i == 9 or i == 10)):
+            if (i == 0 or i == 10):
                 transmission = transmission + f"{joystick.get_button(i)}\n"
         
         for i in range(joystick.get_numaxes()):
             value = joystick.get_axis(i)
-            if abs(value) < 0.2:  # Seuil pour éviter le bruit
-                value = 0
-            elif value > 0.8:
+            if value > 0.8:
                 value = 1
             elif value < -0.8:
                 value = -1
+            else :
+                value = 0
             
             if (i >= 0 and i <= 3):
-                transmission = transmission + f"{value:.2f}\n"
+                transmission = transmission + f"{value}\n"
         
         print(transmission)
         ecrire_commande_fichier(transmission)
-        time.sleep(0.5)  # Tempo pour avoir le temps de lire les infos
+        #time.sleep(0.5)  # Tempo pour avoir le temps de lire les infos
         subprocess.run(["python", os.getcwd()+"\\bt_arduino.py"])  # Exécute le script interface_bluetooth.py.py
 
 except KeyboardInterrupt:

@@ -18,10 +18,10 @@ const int TRIGGER_PULSE = 10;
 const int VITESSE=180;
 
 int NB_DONNEE_RECU = 10;
-int NB_DONNEE_BOUTONS = 4;
-int NB_DONNEE_JOYSTICKS = 6;
-bool VALBOUTONS[4] ; //valBoutons
-float VALJOYSTICKS[6];
+int NB_DONNEE_BOUTONS = 2;
+int NB_DONNEE_JOYSTICKS = 4;
+bool VALBOUTONS[2] ; //valBoutons
+int VALJOYSTICKS[4];
 
 void setup() {
     // Initialisation des broches des capteurs ultrasons
@@ -54,9 +54,6 @@ void setup() {
 
 void loop() {
   //Reception Bluetooth
-  static String msg_Joy = "";
-  static String msg_Btn = "";
-
   if (Serial1.available()) {  // Si on a bien reçu quelque chose
     String received = Serial1.readStringUntil('\n'); // Lit le message complet
     if (received != "OK+CONN" && received != "OK+LOST"){
@@ -64,43 +61,34 @@ void loop() {
       // Si la chaîne commence par "OK+CONN", on la nettoie pour récupérer la commande utile
       if (received.startsWith("OK+CONN")) {
         received = received.substring(7); // Supprime les 7 premiers caractères ("OK+CONN")
-      }
-      // Pour ignorer une éventuelle réponse "OK+LOST" indiquant une déconnexion
-      //Serial.print("Message reçu : ");
-      //Serial.println(received);
-      if (received.length() == 12){
-        msg_Btn = received;
-      }
-      if (received.length() <= 15){
-        msg_Joy = received;
-      }
-
-      if (received.startsWith("OK+LOST")) {
+        Serial.print("Message reçu : ");
+        Serial.println(received);
+      }else if (received.startsWith("OK+LOST")) {
         Serial.println("Déconnexion détectée, received ignorée");
         return;
       }
-      Serial.print("Bouton : ");
-      Serial.println(msg_Btn);
-      Serial.print("Joystik : ");
-      Serial.println(msg_Joy);
     }
-    
-    
+
     // Traitement de la donnée reçu
-    //recuperationChaine(msg_Btn, msg_Joy);
+    recuperationChaine(received);
   
     // Réponse longue (simule une vraie réponse)
     //String response = received + " AAAAA batard woula";
-    //sendChunked(response, 36); // Envoie la rÃ©ponse en morceaux de 32 caractères
+    //sendChunked(response, 36); // Envoie la réponse en morceaux de 32 caractères
   }
   
   
 
  //action();
  /*
+ Serial.print("val joy 1 : ");
+  Serial.println(VALBOUTONS[0]);
+  Serial.println(VALBOUTONS[1]);
   Serial.print("val joy 1 : ");
+  Serial.println(VALJOYSTICKS[0]);
   Serial.println(VALJOYSTICKS[1]);
-  Serial.println(msg_Joy);*/
+  Serial.println(VALJOYSTICKS[2]);
+  Serial.println(VALJOYSTICKS[3]);*/
 }
 
 void action(){
@@ -127,16 +115,12 @@ void action(){
   }
   if(VALJOYSTICKS[1] == 1){
     avancer();
-    delay(400);
   }else if (VALJOYSTICKS[1] == -1){
     reculer();
-    delay(400);
   }else if (VALJOYSTICKS[2] == 1){
     droite();
-    delay(400);
   }else if (VALJOYSTICKS[2] == -1){
     gauche();
-    delay(400);
   }else {
     arreter();
   }
@@ -193,7 +177,7 @@ void droite() {
   digitalWrite(borneIN4, HIGH); 
   analogWrite(borneENA, 200);
   analogWrite(borneENB, 200); 
-  delay(1100);
+  //delay(1100);
   
   Serial.println("Tourner à droite");
 }
@@ -206,7 +190,7 @@ void gauche() {
   digitalWrite(borneIN4, LOW); 
   analogWrite(borneENA, 200);
   analogWrite(borneENB, 200); 
-  delay(1100);
+  //delay(1100);
   
   Serial.println("Tourner à gauche");
 }
@@ -236,53 +220,20 @@ void changeVitesseMoteur(int nouvelleVitesse) {
 //            pendant 2 secondes, puis le met à l'arrêt (au moins 1 seconde)          //
 //************************************************************************************//
 
-// Fonction pour lire un message entier avant de répondre
-/*
-String readCompleteMessage() {
-  String message = "";
-  unsigned long startTime = millis(); // Temps de départ
-
-  while (millis() - startTime < 2000) { // Timeout de 1 seconde
-    while (HM10.available()) {
-      char c = HM10.read();
-      message += c;
-      startTime = millis(); // Reset le timeout Ã  chaque caractère reçu
-    }
-  }
-
-  message.trim(); // Nettoie les espaces et retours Ã  la ligne
-  return message;
-}
-
-// Fonction pour envoyer des trames découpées
-void sendChunked(String message, int chunkSize) {
-  for (int i = 0; i < message.length(); i += chunkSize) {
-    String chunk = message.substring(i, i + chunkSize);
-    HM10.print(chunk);  
-    Serial.print("Envoi : ");
-    Serial.println(chunk);
-    delay(250);
-  }
-  
-  HM10.println();  // Fin du message
-  Serial.println("Fin de l'envoi !");
-}
-*/
-
 // Récupération des valeurs string en tableau pas string
-void recuperationChaine(String chaine_bouton, String chaine_joystik){
-  String chaine = chaine_bouton + chaine_joystik;
+void recuperationChaine(String chaine){
   String tabString[NB_DONNEE_RECU];
   int debutMOT = 0;
   int index = 0;
   // Séparation de la chaîne à chaque virgule
-  for (int i = 0; i < chaine.length(); i++) {
+  for (int i = 0; i<chaine.length(); i++) {
     if (chaine.charAt(i) == ',') {
       tabString[index] = chaine.substring(debutMOT, i);
       debutMOT = i + 1;
       index++;
     }
   }
+  
   // Ajout de la dernière valeur
   tabString[index] = chaine.substring(debutMOT);
 
@@ -292,9 +243,9 @@ void recuperationChaine(String chaine_bouton, String chaine_joystik){
   }
   //Récupération des valeurs des joysticks
   for (int i = NB_DONNEE_JOYSTICKS; i < 10; i++) {
-    VALJOYSTICKS[i - NB_DONNEE_BOUTONS] = tabString[i].toFloat();  // Convertit en float
+    VALJOYSTICKS[i - NB_DONNEE_BOUTONS] = tabString[i].toInt();  // Convertit en int
   }
-  /*
+  
   // Affichage des résultats pour vérifier
   Serial.println("Tableau de booléens:");
   for (int i = 0; i < NB_DONNEE_BOUTONS; i++) {
@@ -308,7 +259,7 @@ void recuperationChaine(String chaine_bouton, String chaine_joystik){
     Serial.print("  ");
   }
   Serial.println();
-  */
+  
 }
 
 
