@@ -22,6 +22,7 @@ int NB_DONNEE_BOUTONS = 2;
 int NB_DONNEE_JOYSTICKS = 4;
 bool VALBOUTONS[2] ; //valBoutons
 int VALJOYSTICKS[4];
+String VALBLUETOOTH[6];
 
 void setup() {
     // Initialisation des broches des capteurs ultrasons
@@ -48,6 +49,9 @@ void setup() {
   for (int i = 0; i < NB_DONNEE_JOYSTICKS; i++) {
     VALJOYSTICKS[i] = 0.00;
   }
+  for (int i = 0; i < 6; i++) {
+    VALBLUETOOTH[i] = "0";
+  }
 
   Serial.println("Initialisation terminée !");
 }
@@ -63,14 +67,14 @@ void loop() {
         received = received.substring(7); // Supprime les 7 premiers caractères ("OK+CONN")
         Serial.print("Message reçu : ");
         Serial.println(received);
+        // Traitement de la donnée reçu
+        recuperationChaine(received);
+        
       }else if (received.startsWith("OK+LOST")) {
         Serial.println("Déconnexion détectée, received ignorée");
         return;
       }
     }
-
-    // Traitement de la donnée reçu
-    recuperationChaine(received);
   
     // Réponse longue (simule une vraie réponse)
     //String response = received + " AAAAA batard woula";
@@ -228,15 +232,21 @@ void recuperationChaine(String chaine){
   // Séparation de la chaîne à chaque virgule
   for (int i = 0; i<chaine.length(); i++) {
     if (chaine.charAt(i) == ',') {
-      tabString[index] = chaine.substring(debutMOT, i);
+      VALBLUETOOTH[index] = chaine.substring(debutMOT, i);
       debutMOT = i + 1;
       index++;
     }
   }
-  
-  // Ajout de la dernière valeur
-  tabString[index] = chaine.substring(debutMOT);
 
+  // Ajout de la dernière valeur
+  VALBLUETOOTH[index] = chaine.substring(debutMOT);
+  Serial.print("Tableau de string:");
+  for (int i = 0; i < 6; i++) {
+    Serial.print(VALBLUETOOTH[i]);
+    Serial.print("  ");
+  }
+  Serial.println("");
+  /*
   //Récupération des valeurs des boutons
   for (int i = 0; i < NB_DONNEE_BOUTONS; i++) {
     VALBOUTONS[i] = (tabString[i].toInt() == 1);  // Convertit en booléen
@@ -259,7 +269,7 @@ void recuperationChaine(String chaine){
     Serial.print("  ");
   }
   Serial.println();
-  
+  */
 }
 
 
