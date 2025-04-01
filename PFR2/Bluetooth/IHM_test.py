@@ -1,6 +1,7 @@
+
 import tkinter as tk
 import subprocess
-
+import os
 
 # Définition des constantes pour les menus
 UTILISATEUR = "Utilisateur"
@@ -81,9 +82,10 @@ class MenuApp:
             print("Changer le mot de passe sélectionné")
         elif choice == CHANGER_GRUISSAN:
             print("Changer le gruissan sélectionné")
+            
         elif choice == AVEC_MANETTE:
             print("Contrôle avec la manette activé")
-            subprocess.run(["python", "pilotage.py"])  # Exécute le script
+            subprocess.run(["python", os.getcwd()+"\pilotage.py"])  # Exécute le script pilotage.py
             
         elif choice == AVEC_VOIX:
             print("Contrôle avec la voix activé")
