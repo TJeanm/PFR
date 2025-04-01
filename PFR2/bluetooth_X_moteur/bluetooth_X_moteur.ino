@@ -1,5 +1,3 @@
-#include <SoftwareSerial.h>
-
 #define borneENA        10      // On associe la borne "ENA" du L298N à la pin D10 de l'arduino
 #define borneIN1        9       // On associe la borne "IN1" du L298N à la pin D9 de l'arduino
 #define borneIN2        8       // On associe la borne "IN2" du L298N à la pin D8 de l'arduino
@@ -19,7 +17,6 @@ const int DISTANCE_SEUIL = 40;
 const int TRIGGER_PULSE = 10;
 const int VITESSE=180;
 
-SoftwareSerial HM10(0, 1); // RX, TX
 int NB_DONNEE_RECU = 10;
 int NB_DONNEE_BOUTONS = 4;
 int NB_DONNEE_JOYSTICKS = 6;
@@ -43,7 +40,8 @@ void setup() {
   pinMode(borneENB, OUTPUT);
 
   Serial.begin(115200);  // Moniteur série
-  HM10.begin(115200);    // Bluetooth HM-10
+  // Pour la communication Bluetooth (par exemple via HM-10 connecté sur Serial1)
+  Serial1.begin(115200);  // Ajuste ce baudrate selon ton module
   for (int i = 0; i < NB_DONNEE_BOUTONS; i++) {
     VALBOUTONS[i] = false;
   }
@@ -56,20 +54,28 @@ void setup() {
 
 void loop() {
   //Reception Bluetooth
-  String received = readCompleteMessage(); // Lit le message complet
-  if (received.length() > 0 && received != "OK+CONN" && received != "OK+LOST") {  // Si on a bien reçu quelque chose
-    received = received.substring(7); // Supprime le début : "OK+CONN"
-    Serial.print("Message complet reçu : ");
-    //Serial.println(received.length());
-    Serial.println(received);
+  
+  if (Serial1.available()) {  // Si on a bien reçu quelque chose
+    String received = Serial1.readStringUntil('\n'); // Lit le message complet
+    received.trim();
     
+    // Si la chaîne commence par "OK+CONN", on la nettoie pour récupérer la commande utile
+    if (received.startsWith("OK+CONN")) {
+      received = received.substring(7); // Supprime les 7 premiers caractères ("OK+CONN")
+    }
+    // Pour ignorer une éventuelle réponse "OK+LOST" indiquant une déconnexion
+    if (received.startsWith("OK+LOST")) {
+      Serial.println("Déconnexion détectée, received ignorée");
+      return;
+    }
+    Serial.print("Message complet reçu : ");
+    Serial.println(received);
     // Traitement de la donnée reçu
     recuperationChaine(received);
   
     // Réponse longue (simule une vraie réponse)
-    String response = received + " AAAAA batard woula";
-    
-    sendChunked(response, 36); // Envoie la rÃ©ponse en morceaux de 32 caractères
+    //String response = received + " AAAAA batard woula";
+    //sendChunked(response, 36); // Envoie la rÃ©ponse en morceaux de 32 caractères
   }
 
   action();
@@ -207,6 +213,7 @@ void changeVitesseMoteur(int nouvelleVitesse) {
 //************************************************************************************//
 
 // Fonction pour lire un message entier avant de répondre
+/*
 String readCompleteMessage() {
   String message = "";
   unsigned long startTime = millis(); // Temps de départ
@@ -236,6 +243,7 @@ void sendChunked(String message, int chunkSize) {
   HM10.println();  // Fin du message
   Serial.println("Fin de l'envoi !");
 }
+*/
 
 // Récupération des valeurs string en tableau pas string
 void recuperationChaine(String chaine){

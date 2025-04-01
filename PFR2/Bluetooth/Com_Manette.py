@@ -43,7 +43,7 @@ try:
         print(transmission)
         ecrire_commande_fichier(transmission)
         time.sleep(0.5)  # Tempo pour avoir le temps de lire les infos
-        subprocess.run(["python", "interface_bluetooth.py"])  # Exécute le script pilotage.py
+        subprocess.run(["python", os.getcwd()+"\\bt_arduino.py"])  # Exécute le script interface_bluetooth.py.py
 
 except KeyboardInterrupt:
     print("🛑 Arrêt du programme")
