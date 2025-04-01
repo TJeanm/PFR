@@ -56,6 +56,43 @@ void setup() {
   Serial.println("Initialisation terminée !");
 }
 
+void recuperationChaine2(String input, String parts[]) {
+  int startIndex = 0;
+  for (int i = 0; i < 6; i++) {
+    int commaIndex = input.indexOf(',', startIndex);
+    if (commaIndex == -1) {  // Dernier élément (ou pas assez de virgules)
+      parts[i] = input.substring(startIndex);
+      break;
+    } else {
+      parts[i] = input.substring(startIndex, commaIndex);
+      startIndex = commaIndex + 1;
+    }
+  }
+}
+
+void recuperationChaine(String chaine){
+  String tabString[NB_DONNEE_RECU];
+  int debutMOT = 0;
+  int index = 0;
+  // Séparation de la chaîne à chaque virgule
+  for (int i = 0; i<chaine.length(); i++) {
+    if (chaine.charAt(i) == ',') {
+      VALBLUETOOTH[index] = chaine.substring(debutMOT, i);
+      debutMOT = i + 1;
+      index++;
+    }
+  }
+
+  // Ajout de la dernière valeur
+  VALBLUETOOTH[index] = chaine.substring(debutMOT);
+  Serial.print("Tableau de string:");
+  for (int i = 0; i < 6; i++) {
+    Serial.print(VALBLUETOOTH[i]);
+    Serial.print("  ");
+  }
+  Serial.println("");
+}
+
 void loop() {
   //Reception Bluetooth
   if (Serial1.available()) {  // Si on a bien reçu quelque chose
@@ -75,6 +112,10 @@ void loop() {
         return;
       }
     }
+  Serial.print("  ");
+  Serial.println(VALBLUETOOTH[3]);
+  Serial.print("  ");
+  Serial.println(VALBLUETOOTH[4]);
   
     // Réponse longue (simule une vraie réponse)
     //String response = received + " AAAAA batard woula";
@@ -83,7 +124,7 @@ void loop() {
   
   
 
- //action();
+ action();
  /*
  Serial.print("val joy 1 : ");
   Serial.println(VALBOUTONS[0]);
@@ -114,22 +155,48 @@ void action(){
   */
 
 
-  if(VALJOYSTICKS[1] == 1.00){
-    Serial.println("1.00");
-  }
-  if(VALJOYSTICKS[1] == 1){
-    avancer();
-  }else if (VALJOYSTICKS[1] == -1){
-    reculer();
-  }else if (VALJOYSTICKS[2] == 1){
-    droite();
-  }else if (VALJOYSTICKS[2] == -1){
-    gauche();
+  
+  if(VALBLUETOOTH[3] == "-1"){
+    if (VALBLUETOOTH[4] =="1"){
+      avancerDroite();
+      delay(400);
+    }
+    else if (VALBLUETOOTH[4] =="-1"){
+      avancerGauche();
+      delay(400);
+    }
+    else{
+      avancer();
+      delay(400);
+    }
+  }else if (VALBLUETOOTH[3] == "1"){
+    if (VALBLUETOOTH[4] =="1"){
+      reculerDroite();
+      delay(400);
+    }
+    else if (VALBLUETOOTH[4] =="-1"){
+      reculerGauche();
+      delay(400);
+    }
+    else{
+      reculer();
+      delay(400);
+    }
   }else {
-    arreter();
+    if (VALBLUETOOTH[4] =="1"){
+      droite();
+      delay(400);
+    }
+    else if (VALBLUETOOTH[4] =="-1"){
+      gauche();
+      delay(400);
+    }
+    else{
+      arreter();
+    }
   }
-
 }
+
 
 //************************************************************************************//
 // Fonction : MOTEUR()                                             //
@@ -199,6 +266,58 @@ void gauche() {
   Serial.println("Tourner à gauche");
 }
 
+void avancerDroite() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, HIGH);
+  analogWrite(borneENA, VITESSE);
+  analogWrite(borneENB, 0); 
+  delay(1100);
+  
+  Serial.println("Tourner à droite");
+}
+
+void avancerGauche() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, HIGH);
+  analogWrite(borneENA, 0);
+  analogWrite(borneENB, VITESSE); 
+  delay(1100);
+  
+  Serial.println("Tourner à gauche");
+}
+
+void reculerDroite() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
+  digitalWrite(borneIN2, LOW);
+  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, LOW);
+  analogWrite(borneENA, VITESSE);
+  analogWrite(borneENB, 0); 
+  delay(1100);
+  
+  Serial.println("Tourner à droite");
+}
+
+void reculerGauche() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
+  digitalWrite(borneIN2, LOW);
+  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, LOW);
+  analogWrite(borneENA, 0);
+  analogWrite(borneENB, VITESSE); 
+  delay(1100);
+  
+  Serial.println("Tourner à gauche");
+}
+
 void arreter() {
   // Désactiver tous les moteurs
   digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
@@ -225,51 +344,5 @@ void changeVitesseMoteur(int nouvelleVitesse) {
 //************************************************************************************//
 
 // Récupération des valeurs string en tableau pas string
-void recuperationChaine(String chaine){
-  String tabString[NB_DONNEE_RECU];
-  int debutMOT = 0;
-  int index = 0;
-  // Séparation de la chaîne à chaque virgule
-  for (int i = 0; i<chaine.length(); i++) {
-    if (chaine.charAt(i) == ',') {
-      VALBLUETOOTH[index] = chaine.substring(debutMOT, i);
-      debutMOT = i + 1;
-      index++;
-    }
-  }
-
-  // Ajout de la dernière valeur
-  VALBLUETOOTH[index] = chaine.substring(debutMOT);
-  Serial.print("Tableau de string:");
-  for (int i = 0; i < 6; i++) {
-    Serial.print(VALBLUETOOTH[i]);
-    Serial.print("  ");
-  }
-  Serial.println("");
-  /*
-  //Récupération des valeurs des boutons
-  for (int i = 0; i < NB_DONNEE_BOUTONS; i++) {
-    VALBOUTONS[i] = (tabString[i].toInt() == 1);  // Convertit en booléen
-  }
-  //Récupération des valeurs des joysticks
-  for (int i = NB_DONNEE_JOYSTICKS; i < 10; i++) {
-    VALJOYSTICKS[i - NB_DONNEE_BOUTONS] = tabString[i].toInt();  // Convertit en int
-  }
-  
-  // Affichage des résultats pour vérifier
-  Serial.println("Tableau de booléens:");
-  for (int i = 0; i < NB_DONNEE_BOUTONS; i++) {
-    Serial.print(VALBOUTONS[i]);
-    Serial.print("  ");
-  }
-  Serial.println();
-  Serial.println("Tableau de floats:");
-  for (int i = 0; i < NB_DONNEE_JOYSTICKS; i++) {
-    Serial.print(VALJOYSTICKS[i]);
-    Serial.print("  ");
-  }
-  Serial.println();
-  */
-}
 
 
