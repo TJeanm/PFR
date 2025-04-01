@@ -20,8 +20,19 @@ async def send_command(command: str):
         else:
             print("Erreur de connexion au module.")
 
+def lecture_manette():
+    lecture = ""
+    with open("Com_to_Manette.txt", "r", encoding="utf-8") as fichier:
+        commande = fichier.readlines()
+        commande.pop()
+        for valeur in commande :
+            lecture = lecture + valeur.strip() + ","
+        lecture = lecture  + "\n"
+    return lecture
+
 async def main():
-    commande = input("Entrez la commande à envoyer (ex: AVANCE, RECULE, GAUCHE, DROITE, STOP) : ")
+    commande = lecture_manette()
+    print(commande)
     await send_command(commande)
 
 if __name__ == "__main__":
