@@ -93,10 +93,10 @@ async def main():
     print(commande)
     await bt.send_message(commande)
     print("⏳ En attente du message complet...")
-    await bt.wait_for_message(timeout=10)  # Attend qu'un message complet soit reçu
+    await bt.wait_for_message(timeout=2)  # Attend qu'un message complet soit reçu
 
-    messages = bt.get_received_messages()
-    print("📥 Messages reçus :", messages)
+    #messages = bt.get_received_messages()
+    #print("📥 Messages reçus :", messages)
 
     await bt.close_connexion()
 

@@ -1,5 +1,7 @@
 import pygame
 import time
+import subprocess
+import os
 
 def ecrire_commande_fichier(commande):
     with open("Com_to_Manette.txt", "w", encoding="utf-8") as fichier:
@@ -41,6 +43,7 @@ try:
         print(transmission)
         ecrire_commande_fichier(transmission)
         time.sleep(0.5)  # Tempo pour avoir le temps de lire les infos
+        subprocess.run(["python", "interface_bluetooth.py"])  # Exécute le script pilotage.py
 
 except KeyboardInterrupt:
     print("🛑 Arrêt du programme")
