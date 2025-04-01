@@ -14,7 +14,7 @@ void setup() {
 
 void loop() {
   String received = readCompleteMessage(); // Lit le message complet
-
+  Serial.println(received);
   if (received.length() > 0 && received != "OK+CONN" && received != "OK+LOST") {  // Si on a bien reçu quelque chose
     received = received.substring(7); // Supprime le début : "OK+CONN"
     Serial.print("Message complet reçu : ");
@@ -24,7 +24,7 @@ void loop() {
     // Traitement de la donnée reçu
     bool valBoutons[NB_DONNEE_BOUTONS];
     float valJoysticks[NB_DONNEE_JOYSTICKS];
-    recuperationChaine(received, valBoutons, valJoysticks);
+    //recuperationChaine(received, valBoutons, valJoysticks);
   
     // Réponse longue (simule une vraie réponse)
     String response = received + " AAAAA batard woula";

@@ -6,12 +6,12 @@
 #define borneENB        5       // On associe la borne "ENB" du L298N à la pin D5 de l'arduino
 
 // Définition des broches pour les capteurs ultrasons
-#define FRONT_TRIGGER1 22
-#define FRONT_ECHO1    23
-#define FRONT_TRIGGER2 26
-#define FRONT_ECHO2    27
-#define REAR_TRIGGER  24
-#define REAR_ECHO     25
+#define FRONT_TRIGGER1 13
+#define FRONT_ECHO1    12
+#define FRONT_TRIGGER2 3
+#define FRONT_ECHO2    2
+#define REAR_TRIGGER  11
+#define REAR_ECHO     4
 
 // Seuil en centimètres pour détecter un obstacle
 const int DISTANCE_SEUIL = 40;
