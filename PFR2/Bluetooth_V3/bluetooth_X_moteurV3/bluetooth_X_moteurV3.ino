@@ -1,4 +1,4 @@
-  #define borneENA        10      // On associe la borne "ENA" du L298N à la pin D10 de l'arduino
+#define borneENA        10      // On associe la borne "ENA" du L298N à la pin D10 de l'arduino
 #define borneIN1        9       // On associe la borne "IN1" du L298N à la pin D9 de l'arduino
 #define borneIN2        8       // On associe la borne "IN2" du L298N à la pin D8 de l'arduino
 #define borneIN3        7       // On associe la borne "IN3" du L298N à la pin D7 de l'arduino
@@ -48,6 +48,7 @@ void loop() {
     String received = Serial1.readStringUntil('\n'); // Lit le message complet
     if (received != "OK+CONN" && received != "OK+LOST"){
       received.trim();
+      Serial.println(received);
       // Si la chaîne commence par "OK+CONN", on la nettoie pour récupérer la commande utile
       if (received.startsWith("OK+CONN")) {
         received = received.substring(7); // Supprime les 7 premiers caractères ("OK+CONN")
