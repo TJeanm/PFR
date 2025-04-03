@@ -16,13 +16,8 @@ const int DISTANCE_SEUIL = 40;
 // Durée du signal trigger (en microsecondes)
 const int TRIGGER_PULSE = 10;
 const int VITESSE=180;
+const int VITESSE_RAPIDE=255;
 
-int NB_DONNEE_RECU = 10;
-int NB_DONNEE_BOUTONS = 2;
-int NB_DONNEE_JOYSTICKS = 4;
-bool VALBOUTONS[2] ; //valBoutons
-int VALJOYSTICKS[4];
-String VALBLUETOOTH[6];
 
 void setup() {
     // Initialisation des broches des capteurs ultrasons
@@ -43,15 +38,6 @@ void setup() {
   Serial.begin(115200);  // Moniteur série
   // Pour la communication Bluetooth (par exemple via HM-10 connecté sur Serial1)
   Serial1.begin(115200);  // Ajuste ce baudrate selon ton module
-  for (int i = 0; i < NB_DONNEE_BOUTONS; i++) {
-    VALBOUTONS[i] = false;
-  }
-  for (int i = 0; i < NB_DONNEE_JOYSTICKS; i++) {
-    VALJOYSTICKS[i] = 0.00;
-  }
-  for (int i = 0; i < 6; i++) {
-    VALBLUETOOTH[i] = "0";
-  }
 
   Serial.println("Initialisation terminée !");
 }
@@ -68,34 +54,69 @@ void loop() {
         Serial.print("Message reçu : ");
         Serial.println(received);
         // Traitement de la donnée reçu
-        recuperationChaine(received);
         
       }else if (received.startsWith("OK+LOST")) {
         Serial.println("Déconnexion détectée, received ignorée");
         return;
       }
     }
-  
-    // Réponse longue (simule une vraie réponse)
-    //String response = received + " AAAAA batard woula";
-    //sendChunked(response, 36); // Envoie la réponse en morceaux de 32 caractères
+
+    switch (received.charAt(0)){
+      case 'm': 
+        arreter();
+        break;
+      case 'z': 
+        avancer();
+        break;
+      case 's': 
+        reculer();
+        break;
+      case 'q': 
+        gauche();
+        break;
+      case 'd': 
+        droite();
+        break;
+      case 'a': 
+        avancerGauche();
+        break;
+      case 'e': 
+        avancerDroite();
+        break;
+      case 'w': 
+        reculerGauche();
+        break;
+      case 'x': 
+        reculerDroite();
+        break;
+      case 't': 
+        avancerRapide();
+        break;
+      case 'g': 
+        reculerRapide();
+        break;
+      case 'f': 
+        gauche();
+        break;
+      case 'h': 
+        droite();
+        break;
+      case 'r': 
+        avancerGaucheRapide();
+        break;
+      case 'y': 
+        avancerDroiteRapide();
+        break;
+      case 'v': 
+        reculerGaucheRapide();
+        break;
+      case 'b': 
+        reculerDroiteRapide();
+        break;
+    }
   }
-  
-  
+  }
 
- //action();
- /*
- Serial.print("val joy 1 : ");
-  Serial.println(VALBOUTONS[0]);
-  Serial.println(VALBOUTONS[1]);
-  Serial.print("val joy 1 : ");
-  Serial.println(VALJOYSTICKS[0]);
-  Serial.println(VALJOYSTICKS[1]);
-  Serial.println(VALJOYSTICKS[2]);
-  Serial.println(VALJOYSTICKS[3]);*/
-}
-
-void action(){
   /*
   // Mesure des distances
   long distanceFront1 = getDistance(FRONT_TRIGGER1, FRONT_ECHO1);
@@ -114,28 +135,7 @@ void action(){
   */
 
 
-  if(VALJOYSTICKS[1] == 1.00){
-    Serial.println("1.00");
-  }
-  if(VALJOYSTICKS[1] == 1){
-    avancer();
-  }else if (VALJOYSTICKS[1] == -1){
-    reculer();
-  }else if (VALJOYSTICKS[2] == 1){
-    droite();
-  }else if (VALJOYSTICKS[2] == -1){
-    gauche();
-  }else {
-    arreter();
-  }
 
-}
-
-//************************************************************************************//
-// Fonction : MOTEUR()                                             //
-// But :      Active l'alimentation du moteur branché sur le pont A                   //
-//            pendant 2 secondes, puis le met à l'arrêt (au moins 1 seconde)          //
-//************************************************************************************//
 long getDistance(int trigPin, int echoPin) {
   // Envoi du signal trigger
   digitalWrite(trigPin, LOW);
@@ -151,25 +151,25 @@ long getDistance(int trigPin, int echoPin) {
   return distance;
 }
 
-// Fonctions de commande des moteurs
 void reculer() {
+  
   digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
   digitalWrite(borneIN2, LOW);
   digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, LOW); 
+  changeVitesseMoteur(VITESSE);
   
   Serial.println("Reculer");
 }
 
 void avancer() {
   // Pour reculer, activer les sorties en arrière et désactiver l'avant
+  
   digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
   digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, HIGH);
-  analogWrite(borneENA, VITESSE);
-  analogWrite(borneENB, VITESSE); 
-
+  changeVitesseMoteur(VITESSE);
   Serial.println("Avancer");
 }
 
@@ -179,11 +179,10 @@ void droite() {
   digitalWrite(borneIN2, LOW);                 // L'entrée IN2 doit être au niveau haut
   digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, HIGH); 
-  analogWrite(borneENA, 200);
-  analogWrite(borneENB, 200); 
+  changeVitesseMoteur(200); 
   //delay(1100);
   
-  Serial.println("Tourner à droite");
+  Serial.println("Tourner à droite sur place");
 }
 
 void gauche() {
@@ -192,9 +191,60 @@ void gauche() {
   digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
   digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, LOW); 
-  analogWrite(borneENA, 200);
-  analogWrite(borneENB, 200); 
+  changeVitesseMoteur(200); 
   //delay(1100);
+  
+  Serial.println("Tourner à gauche sur place");
+}
+
+void avancerDroite() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, HIGH);
+  analogWrite(borneENA, VITESSE);
+  analogWrite(borneENB, 0); 
+  delay(1100);
+  
+  Serial.println("Tourner à droite");
+}
+
+void avancerGauche() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, HIGH);
+  analogWrite(borneENA, 0);
+  analogWrite(borneENB, VITESSE); 
+  delay(1100);
+  
+  Serial.println("Tourner à gauche");
+}
+
+void reculerDroite() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
+  digitalWrite(borneIN2, LOW);
+  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, LOW);
+  analogWrite(borneENA, VITESSE);
+  analogWrite(borneENB, 0); 
+  delay(1100);
+  
+  Serial.println("Tourner à droite");
+}
+
+void reculerGauche() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
+  digitalWrite(borneIN2, LOW);
+  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, LOW);
+  analogWrite(borneENA, 0);
+  analogWrite(borneENB, VITESSE); 
+  delay(1100);
   
   Serial.println("Tourner à gauche");
 }
@@ -213,63 +263,86 @@ void arreter() {
 
 }
 
+void reculerRapide() {
+  
+  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
+  digitalWrite(borneIN2, LOW);
+  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, LOW); 
+  changeVitesseMoteur(VITESSE_RAPIDE);
+  
+  Serial.println("Reculer rapide");
+}
+
+void avancerRapide() {
+  // Pour reculer, activer les sorties en arrière et désactiver l'avant
+  
+  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, HIGH);
+  changeVitesseMoteur(VITESSE_RAPIDE);
+  Serial.println("Avancer rapide");
+}
+
+void avancerDroiteRapide() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, HIGH);
+  analogWrite(borneENA, VITESSE_RAPIDE);
+  analogWrite(borneENB, 0); 
+  delay(1100);
+  
+  Serial.println("Tourner à droite rapide");
+}
+
+void avancerGaucheRapide() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, HIGH);
+  analogWrite(borneENA, 0);
+  analogWrite(borneENB, VITESSE_RAPIDE); 
+  delay(1100);
+  
+  Serial.println("Tourner à gauche rapide");
+}
+
+void reculerDroiteRapide() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
+  digitalWrite(borneIN2, LOW);
+  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, LOW);
+  analogWrite(borneENA, VITESSE_RAPIDE);
+  analogWrite(borneENB, 0); 
+  delay(1100);
+  
+  Serial.println("Tourner à droite rapide");
+}
+
+void reculerGaucheRapide() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
+  digitalWrite(borneIN2, LOW);
+  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, LOW);
+  analogWrite(borneENA, 0);
+  analogWrite(borneENB, VITESSE_RAPIDE); 
+  delay(1100);
+  
+  Serial.println("Tourner à gauche rapide");
+}
+
 void changeVitesseMoteur(int nouvelleVitesse) {
   
   // Génère un signal PWM permanent, de rapport cyclique égal à "nouvelleVitesse" (valeur comprise entre 0 et 255)
   analogWrite(borneENA, nouvelleVitesse);
+  analogWrite(borneENB, nouvelleVitesse);
 }
-//************************************************************************************//
-// Fonction : BLUETOOTH()                                             //
-// But :      Active l'alimentation du moteur branché sur le pont A                   //
-//            pendant 2 secondes, puis le met à l'arrêt (au moins 1 seconde)          //
-//************************************************************************************//
 
-// Récupération des valeurs string en tableau pas string
-void recuperationChaine(String chaine){
-  String tabString[NB_DONNEE_RECU];
-  int debutMOT = 0;
-  int index = 0;
-  // Séparation de la chaîne à chaque virgule
-  for (int i = 0; i<chaine.length(); i++) {
-    if (chaine.charAt(i) == ',') {
-      VALBLUETOOTH[index] = chaine.substring(debutMOT, i);
-      debutMOT = i + 1;
-      index++;
-    }
-  }
-
-  // Ajout de la dernière valeur
-  VALBLUETOOTH[index] = chaine.substring(debutMOT);
-  Serial.print("Tableau de string:");
-  for (int i = 0; i < 6; i++) {
-    Serial.print(VALBLUETOOTH[i]);
-    Serial.print("  ");
-  }
-  Serial.println("");
-  /*
-  //Récupération des valeurs des boutons
-  for (int i = 0; i < NB_DONNEE_BOUTONS; i++) {
-    VALBOUTONS[i] = (tabString[i].toInt() == 1);  // Convertit en booléen
-  }
-  //Récupération des valeurs des joysticks
-  for (int i = NB_DONNEE_JOYSTICKS; i < 10; i++) {
-    VALJOYSTICKS[i - NB_DONNEE_BOUTONS] = tabString[i].toInt();  // Convertit en int
-  }
-  
-  // Affichage des résultats pour vérifier
-  Serial.println("Tableau de booléens:");
-  for (int i = 0; i < NB_DONNEE_BOUTONS; i++) {
-    Serial.print(VALBOUTONS[i]);
-    Serial.print("  ");
-  }
-  Serial.println();
-  Serial.println("Tableau de floats:");
-  for (int i = 0; i < NB_DONNEE_JOYSTICKS; i++) {
-    Serial.print(VALJOYSTICKS[i]);
-    Serial.print("  ");
-  }
-  Serial.println();
-  */
-}
 
 
