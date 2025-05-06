@@ -37,7 +37,7 @@ void setup() {
 
   Serial.begin(115200);  // Moniteur série
   // Pour la communication Bluetooth (par exemple via HM-10 connecté sur Serial1)
-  Serial1.begin(115200);  // Ajuste ce baudrate selon ton module
+  Serial1.begin(115200);   // HM‑10 par défaut en 9600 bauds
 
   Serial.println("Initialisation terminée !");
 }
@@ -48,12 +48,11 @@ void loop() {
     String received = Serial1.readStringUntil('\n'); // Lit le message complet
     if (received != "OK+CONN" && received != "OK+LOST"){
       received.trim();
-      Serial.println(received);
+      //Serial.println(received);
       // Si la chaîne commence par "OK+CONN", on la nettoie pour récupérer la commande utile
       if (received.startsWith("OK+CONN")) {
         received = received.substring(7); // Supprime les 7 premiers caractères ("OK+CONN")
         Serial.print("Message reçu : ");
-        Serial.println(received);
         // Traitement de la donnée reçu
         
       }else if (received.startsWith("OK+LOST")) {
@@ -97,28 +96,28 @@ void loop() {
         reculerRapide();
         break;
       case 'f': 
-        gauche();
+        gaucheRapide();
         break;
       case 'h': 
-        droite();
+        droiteRapide();
         break;
       case 'r': 
-        avancerGaucheRapide();
+        avancerGauche();
         break;
       case 'y': 
-        avancerDroiteRapide();
+        avancerDroite();
         break;
       case 'v': 
-        reculerGaucheRapide();
+        reculerGauche();
         break;
       case 'b': 
-        reculerDroiteRapide();
+        reculerDroite();
         break;
     }
   }
   }
 
-  /*
+  
   // Mesure des distances
   long distanceFront1 = getDistance(FRONT_TRIGGER1, FRONT_ECHO1);
   long distanceFront2 = getDistance(FRONT_TRIGGER2, FRONT_ECHO2);
@@ -133,7 +132,7 @@ void loop() {
     delay(400);
     arreter();
   }
-  */
+  
 
 
 
@@ -160,7 +159,6 @@ void reculer() {
   digitalWrite(borneIN4, LOW); 
   changeVitesseMoteur(VITESSE);
   
-  Serial.println("Reculer");
 }
 
 void avancer() {
@@ -171,7 +169,6 @@ void avancer() {
   digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, HIGH);
   changeVitesseMoteur(VITESSE);
-  Serial.println("Avancer");
 }
 
 void droite() {
@@ -183,7 +180,6 @@ void droite() {
   changeVitesseMoteur(200); 
   //delay(1100);
   
-  Serial.println("Tourner à droite sur place");
 }
 
 void gauche() {
@@ -195,59 +191,55 @@ void gauche() {
   changeVitesseMoteur(200); 
   //delay(1100);
   
-  Serial.println("Tourner à gauche sur place");
 }
 
 void avancerDroite() {
   // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
-  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
-  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN1, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, LOW);                 // L'entrée IN2 doit être au niveau haut
   digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, HIGH);
-  analogWrite(borneENA, VITESSE);
-  analogWrite(borneENB, 0); 
-  delay(1100);
+  analogWrite(borneENA, VITESSE/3);
+  analogWrite(borneENB, VITESSE_RAPIDE); 
   
-  Serial.println("Tourner à droite");
+  
 }
 
 void avancerGauche() {
   // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
   digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
-  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
-  digitalWrite(borneIN4, HIGH);
-  analogWrite(borneENA, 0);
-  analogWrite(borneENB, VITESSE); 
-  delay(1100);
+  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, LOW);
+  analogWrite(borneENA, VITESSE_RAPIDE);
+  analogWrite(borneENB, VITESSE/3); 
+ 
   
   Serial.println("Tourner à gauche");
 }
 
 void reculerDroite() {
   // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
-  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
-  digitalWrite(borneIN2, LOW);
+  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
   digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, LOW);
-  analogWrite(borneENA, VITESSE);
-  analogWrite(borneENB, 0); 
-  delay(1100);
+  analogWrite(borneENA, VITESSE/3);
+  analogWrite(borneENB, VITESSE_RAPIDE);  
+
   
-  Serial.println("Tourner à droite");
 }
 
 void reculerGauche() {
   // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
-  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
-  digitalWrite(borneIN2, LOW);
-  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
-  digitalWrite(borneIN4, LOW);
-  analogWrite(borneENA, 0);
-  analogWrite(borneENB, VITESSE); 
-  delay(1100);
+  digitalWrite(borneIN1, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, LOW);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, HIGH);
+  analogWrite(borneENA, VITESSE_RAPIDE);
+  analogWrite(borneENB, VITESSE/3); 
+
   
-  Serial.println("Tourner à gauche");
 }
 
 void arreter() {
@@ -260,7 +252,6 @@ void arreter() {
   digitalWrite(borneENB, LOW);  
   
   
-  Serial.println("Arrêt");
 
 }
 
@@ -272,7 +263,6 @@ void reculerRapide() {
   digitalWrite(borneIN4, LOW); 
   changeVitesseMoteur(VITESSE_RAPIDE);
   
-  Serial.println("Reculer rapide");
 }
 
 void avancerRapide() {
@@ -283,60 +273,30 @@ void avancerRapide() {
   digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, HIGH);
   changeVitesseMoteur(VITESSE_RAPIDE);
-  Serial.println("Avancer rapide");
 }
 
-void avancerDroiteRapide() {
+void droiteRapide() {
+  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
+  digitalWrite(borneIN1, HIGH);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN2, LOW);                 // L'entrée IN2 doit être au niveau haut
+  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
+  digitalWrite(borneIN4, HIGH); 
+  changeVitesseMoteur(VITESSE_RAPIDE); 
+  //delay(1100);
+  
+}
+
+void gaucheRapide() {
   // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
   digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
-  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
-  digitalWrite(borneIN4, HIGH);
-  analogWrite(borneENA, VITESSE_RAPIDE);
-  analogWrite(borneENB, 0); 
-  delay(1100);
-  
-  Serial.println("Tourner à droite rapide");
-}
-
-void avancerGaucheRapide() {
-  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
-  digitalWrite(borneIN1, LOW);                  // L'entrée IN1 doit être au niveau bas
-  digitalWrite(borneIN2, HIGH);                 // L'entrée IN2 doit être au niveau haut
-  digitalWrite(borneIN3, LOW);                  // L'entrée IN1 doit être au niveau bas
-  digitalWrite(borneIN4, HIGH);
-  analogWrite(borneENA, 0);
-  analogWrite(borneENB, VITESSE_RAPIDE); 
-  delay(1100);
-  
-  Serial.println("Tourner à gauche rapide");
-}
-
-void reculerDroiteRapide() {
-  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
-  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
-  digitalWrite(borneIN2, LOW);
   digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
-  digitalWrite(borneIN4, LOW);
-  analogWrite(borneENA, VITESSE_RAPIDE);
-  analogWrite(borneENB, 0); 
-  delay(1100);
+  digitalWrite(borneIN4, LOW); 
+  changeVitesseMoteur(VITESSE_RAPIDE); 
+  //delay(1100);
   
-  Serial.println("Tourner à droite rapide");
 }
 
-void reculerGaucheRapide() {
-  // Pour tourner, par exemple, faire tourner le moteur gauche en avant et le droit en arrière
-  digitalWrite(borneIN1, HIGH);                 // L'entrée IN1 doit être au niveau haut
-  digitalWrite(borneIN2, LOW);
-  digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
-  digitalWrite(borneIN4, LOW);
-  analogWrite(borneENA, 0);
-  analogWrite(borneENB, VITESSE_RAPIDE); 
-  delay(1100);
-  
-  Serial.println("Tourner à gauche rapide");
-}
 
 void changeVitesseMoteur(int nouvelleVitesse) {
   

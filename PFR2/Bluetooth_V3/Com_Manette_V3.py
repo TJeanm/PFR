@@ -1,20 +1,13 @@
 import asyncio
-import asyncio
 import sys
-
-if sys.platform == "win32":
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
-from bleak import BleakClient
 import pygame
+from bleak import BleakClient, BleakScanner
 
-# Adresse MAC du HM-10
-HM10_ADDRESS = "D8:A9:8B:C4:08:F2"
-
-# UUID de la caractéristique UART
 UART_CHAR_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
+TARGET_NAME    = "robot2"
+SCAN_TIMEOUT   = 5.0    # secondes
 
-# Définition des commandes
+# Vos commandes
 ARRET = "m"
 AVANCE = "z"
 RECULE = "s"
@@ -24,7 +17,7 @@ AVANCE_GAUCHE = "a"
 AVANCE_DROITE = "e"
 RECULE_GAUCHE = "w"
 RECULE_DROITE = "x"
-
+# Commandes rapides
 AVANCE_RAPIDE = "t"
 RECULE_RAPIDE = "g"
 GAUCHE_RAPIDE = "f"
@@ -34,135 +27,107 @@ AVANCE_DROITE_RAPIDE = "y"
 RECULE_GAUCHE_RAPIDE = "v"
 RECULE_DROITE_RAPIDE = "b"
 
+# seuil de deadzone : tout |axe| < 0.2 est considéré 0
+DEADZONE = 0.2
+# délai de boucle ramené à 20 ms
+LOOP_DELAY = 0.02
 
-class BluetoothCommunication:
-    def __init__(self, adresse_mac, uuid):
-        print("Test init start")
-        self.adresse_mac = adresse_mac
-        self.uuid = uuid
-        self.client = None
-        self.transmission = ""
-        self.last_transmission = None
-        self.joystick = None
+async def main():
+    # 1) scan 5 s
+    print(f"🔍 Recherche de « {TARGET_NAME} » ({SCAN_TIMEOUT}s)...")
+    devices = await BleakScanner.discover(timeout=SCAN_TIMEOUT)
+    target = next((d for d in devices
+                   if d.name and d.name.lower() == TARGET_NAME.lower()), None)
+    if not target:
+        print(f"❌ Aucun périphérique nommé {TARGET_NAME}.")
+        return
 
-    async def init_HM10(self):
-        print("Test init HM10")
-        self.client = BleakClient(self.adresse_mac)
-        try:
-            await self.client.connect()
-            #await self.client.get_services()
-            if self.client.is_connected:
-                print(f"✅ Connecté à {self.adresse_mac}")
-                data = (self.transmission + "\n").encode("utf-8")
-                await self.client.write_gatt_char(UART_CHAR_UUID, data)
-            else:
-                print("❌ Échec de connexion au module Bluetooth.")
-        except Exception as e:
-            print(f"Erreur de connexion Bluetooth : {e}")
+    # 2) Connexion BLE
+    print(f"🔗 Connexion à {target.name} [{target.address}]…")
+    async with BleakClient(target.address) as client:
+        if not client.is_connected:
+            print("❌ Échec de connexion.")
+            return
+        print("✅ Connecté.")
 
-    def init_Manette(self):
-        print("Test init Manette")
+        # 3) Init pygame + manette
         pygame.init()
         pygame.joystick.init()
-        if pygame.joystick.get_count() > 0:
-            self.joystick = pygame.joystick.Joystick(0)
-            self.joystick.init()
-            print(f"Manette détectée : {self.joystick.get_name()}")
-        else:
-            print("Aucune manette détectée")
-            exit()
+        if pygame.joystick.get_count() == 0:
+            print("🚨 Pas de manette détectée.")
+            return
+        joy = pygame.joystick.Joystick(0)
+        joy.init()
+        print(f"🎮 Manette : {joy.get_name()}")
 
-    def lecture_manette(self):
-        pygame.event.pump()
-        transmissionValue = ""
-        value_btn = [0] * self.joystick.get_numbuttons()
-        value_joy = [0] * self.joystick.get_numaxes()
-
-        for i in range(self.joystick.get_numbuttons()):
-            value_btn[i] = self.joystick.get_button(i)
-
-        for i in range(self.joystick.get_numaxes()):
-            value = self.joystick.get_axis(i)
-            if value > 0.8:
-                value = 1
-            elif value < -0.8:
-                value = -1
-            else:
-                value = 0
-            value_joy[i] = value
-
-        # 🔴 Arrêt immédiat si bouton [2] est pressé
-        if value_btn[2] == 1:
-            print("🛑 Bouton [2] pressé : arrêt du programme.")
-            raise KeyboardInterrupt
-
-        # Choix de la commande
-        if value_btn[10] == 0:
-            if value_joy[1] == -1:
-                if value_joy[2] == 1:
-                    transmissionValue = AVANCE_DROITE
-                elif value_joy[2] == -1:
-                    transmissionValue = AVANCE_GAUCHE
-                else:
-                    transmissionValue = AVANCE
-            elif value_joy[1] == 1:
-                if value_joy[2] == 1:
-                    transmissionValue = RECULE_DROITE
-                elif value_joy[2] == -1:
-                    transmissionValue = RECULE_GAUCHE
-                else:
-                    transmissionValue = RECULE
-            elif value_joy[2] == 1:
-                transmissionValue = DROITE
-            elif value_joy[2] == -1:
-                transmissionValue = GAUCHE
-            else:
-                transmissionValue = ARRET
-        else:
-            if value_joy[1] == -1:
-                if value_joy[2] == 1:
-                    transmissionValue = AVANCE_DROITE_RAPIDE
-                elif value_joy[2] == -1:
-                    transmissionValue = AVANCE_GAUCHE_RAPIDE
-                else:
-                    transmissionValue = AVANCE_RAPIDE
-            elif value_joy[1] == 1:
-                if value_joy[2] == 1:
-                    transmissionValue = RECULE_DROITE_RAPIDE
-                elif value_joy[2] == -1:
-                    transmissionValue = RECULE_GAUCHE_RAPIDE
-                else:
-                    transmissionValue = RECULE_RAPIDE
-            elif value_joy[2] == 1:
-                transmissionValue = DROITE_RAPIDE
-            elif value_joy[2] == -1:
-                transmissionValue = GAUCHE_RAPIDE
-            else:
-                transmissionValue = ARRET
-
-        self.transmission = transmissionValue
-
-    async def loop(self):
+        # 4) boucle lecture/envoi
+        last_cmd = None
         try:
             while True:
-                self.lecture_manette()
-                if self.transmission != self.last_transmission:
-                    await self.init_HM10()
-                    #data = (self.transmission + "\n").encode("utf-8")
-                    #await self.client.write_gatt_char(UART_CHAR_UUID, data)
-                    print(f"Commande envoyée : {self.transmission}")
-                    self.last_transmission = self.transmission  
-                await asyncio.sleep(0.1)
+                # on pompe les events
+                pygame.event.pump()
+
+                # lecture boutons
+                btn = [joy.get_button(i) for i in range(joy.get_numbuttons())]
+                # lecture axes avec deadzone
+                axes = []
+                for i in range(joy.get_numaxes()):
+                    v = joy.get_axis(i)
+                    if abs(v) < DEADZONE:
+                        axes.append(0)
+                    else:
+                        axes.append(1 if v > 0 else -1)
+
+                # logique de choix de cmd (idem votre code)
+                if btn[10] == 0:
+                    if axes[1] == -1:
+                        cmd = (AVANCE_DROITE if axes[2] == 1 else
+                               AVANCE_GAUCHE if axes[2] == -1 else
+                               AVANCE)
+                    elif axes[1] == 1:
+                        cmd = (RECULE_DROITE if axes[2] == 1 else
+                               RECULE_GAUCHE if axes[2] == -1 else
+                               RECULE)
+                    elif axes[2] == 1:
+                        cmd = DROITE
+                    elif axes[2] == -1:
+                        cmd = GAUCHE
+                    else:
+                        cmd = ARRET
+                else:
+                    if axes[1] == -1:
+                        cmd = (AVANCE_DROITE_RAPIDE if axes[2] == 1 else
+                               AVANCE_GAUCHE_RAPIDE if axes[2] == -1 else
+                               AVANCE_RAPIDE)
+                    elif axes[1] == 1:
+                        cmd = (RECULE_DROITE_RAPIDE if axes[2] == 1 else
+                               RECULE_GAUCHE_RAPIDE if axes[2] == -1 else
+                               RECULE_RAPIDE)
+                    elif axes[2] == 1:
+                        cmd = DROITE_RAPIDE
+                    elif axes[2] == -1:
+                        cmd = GAUCHE_RAPIDE
+                    else:
+                        cmd = ARRET
+
+                # 5) envoi si changement + \n pour l'Arduino
+                if cmd != last_cmd:
+                    data = f"{cmd}\n".encode()
+                    # response=False pour ne pas attendre l'ACK
+                    await client.write_gatt_char(
+                        UART_CHAR_UUID, data, response=False
+                    )
+                    print(f"📤 Envoyé : {cmd}")
+                    last_cmd = cmd
+
+                await asyncio.sleep(LOOP_DELAY)
+
         except KeyboardInterrupt:
-            print("🛑 Arrêt du programme par l'utilisateur")
+            print("\n🛑 Arrêt demandé par l'utilisateur.")
         finally:
             pygame.quit()
 
-
-async def main():
-    BC = BluetoothCommunication(HM10_ADDRESS, UART_CHAR_UUID)
-    #await BC.init_HM10()
-    BC.init_Manette()
-    await BC.loop()
-
-asyncio.run(main())
+if __name__ == "__main__":
+    if sys.platform == "win32":
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    asyncio.run(main())
