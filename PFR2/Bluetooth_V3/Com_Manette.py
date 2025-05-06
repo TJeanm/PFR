@@ -43,24 +43,22 @@ else:
 try:
     while True:
         pygame.event.pump()
-        transmission = ""
-        value_btn = []
-        value_joy = []
-        index = 0
+        transmissionValue = ""
+        value_btn = [0] * joystick.get_numbuttons()
+        value_joy = [0] * joystick.get_numaxes()
+
         for i in range(joystick.get_numbuttons()):
-            value_btn[index] = joystick.get_button(i)
-            index = index+1
+            value_btn[i] = joystick.get_button(i)
+
         for i in range(joystick.get_numaxes()):
             value = joystick.get_axis(i)
             if value > 0.8:
                 value = 1
             elif value < -0.8:
                 value = -1
-            else :
+            else:
                 value = 0
-
             value_joy[i] = value
-            index = index+1
 
         # Choix de la commande à exécuter (value_btn[10] rend plus rapide)
         if value_btn[10] == 0 :
