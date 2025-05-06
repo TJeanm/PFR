@@ -4,8 +4,8 @@ import pygame
 from bleak import BleakClient, BleakScanner
 
 UART_CHAR_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
-TARGET_NAME    = "robot2"
-SCAN_TIMEOUT   = 5.0    # secondes
+TARGET_NAME = "robot2"
+SCAN_TIMEOUT = 5.0  # secondes
 
 # Vos commandes
 ARRET = "m"
@@ -26,11 +26,14 @@ AVANCE_GAUCHE_RAPIDE = "r"
 AVANCE_DROITE_RAPIDE = "y"
 RECULE_GAUCHE_RAPIDE = "v"
 RECULE_DROITE_RAPIDE = "b"
+MODE_MANUEL = "p"
+MODE_AUTO = "o"
 
 # seuil de deadzone : tout |axe| < 0.2 est considéré 0
 DEADZONE = 0.2
 # délai de boucle ramené à 20 ms
 LOOP_DELAY = 0.02
+
 
 async def main():
     # 1) scan 5 s
@@ -79,7 +82,11 @@ async def main():
                         axes.append(1 if v > 0 else -1)
 
                 # logique de choix de cmd (idem votre code)
-                if btn[10] == 0:
+                if btn[2] == 1:
+                    cmd = MODE_AUTO
+                elif btn[1] == 1:
+                    cmd = MODE_MANUEL
+                elif btn[10] == 0:
                     if axes[1] == -1:
                         cmd = (AVANCE_DROITE if axes[2] == 1 else
                                AVANCE_GAUCHE if axes[2] == -1 else
@@ -122,10 +129,11 @@ async def main():
 
                 await asyncio.sleep(LOOP_DELAY)
 
-        except KeyboardInterrupt:
+        except (btn[2] == 1):
             print("\n🛑 Arrêt demandé par l'utilisateur.")
         finally:
             pygame.quit()
+
 
 if __name__ == "__main__":
     if sys.platform == "win32":
