@@ -62,6 +62,8 @@ void reculer() {
   digitalWrite(borneIN2, LOW);
   digitalWrite(borneIN3, HIGH);                  // L'entrée IN1 doit être au niveau bas
   digitalWrite(borneIN4, LOW); 
+   analogWrite(borneENA, VITESSE);
+  analogWrite(borneENB, VITESSE); 
   
   Serial.println("Reculer");
 }
@@ -136,7 +138,7 @@ void loop() {
   
   // Si aucun obstacle devant (distance > seuil), avancer
   if (distanceFront1 > DISTANCE_SEUIL || distanceFront1 == 0 && distanceFront1 > DISTANCE_SEUIL || distanceFront1 == 0) {
-    avancer();
+    reculer();
     if (distanceFront1 < DISTANCE_SEUIL && distanceFront1 != 0 || distanceFront1 < DISTANCE_SEUIL && distanceFront1 != 0) {
       reculer();
       delay(400);

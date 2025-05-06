@@ -118,7 +118,7 @@ void loop() {
   }
 
   
-  // Mesure des distances
+  /*/ Mesure des distances
   long distanceFront1 = getDistance(FRONT_TRIGGER1, FRONT_ECHO1);
   long distanceFront2 = getDistance(FRONT_TRIGGER2, FRONT_ECHO2);
   long distanceRear  = getDistance(REAR_TRIGGER, REAR_ECHO);
@@ -132,7 +132,7 @@ void loop() {
     delay(400);
     arreter();
   }
-  
+  */
 
 
 
@@ -304,6 +304,5 @@ void changeVitesseMoteur(int nouvelleVitesse) {
   analogWrite(borneENA, nouvelleVitesse);
   analogWrite(borneENB, nouvelleVitesse);
 }
-
 
 
