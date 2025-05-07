@@ -5,19 +5,20 @@
 #define borneIN4        6       // On associe la borne "IN4" du L298N à la pin D6 de l'arduino
 #define borneENB        5       // On associe la borne "ENB" du L298N à la pin D5 de l'arduino
 // Définition des broches pour les capteurs ultrasons
-#define FRONT_TRIGGER1 13
-#define FRONT_ECHO1    12
-#define FRONT_TRIGGER2 3
-#define FRONT_ECHO2    2
-#define REAR_TRIGGER  11
-#define REAR_ECHO     4
+#define FRONT_TRIGGER1 27
+#define FRONT_ECHO1    26
+#define FRONT_TRIGGER2 22
+#define FRONT_ECHO2    23
+#define REAR_TRIGGER  24
+#define REAR_ECHO     25
 // Seuil en centimètres pour détecter un obstacle
 const int DISTANCE_SEUIL = 40;
 // Durée du signal trigger (en microsecondes)
 const int TRIGGER_PULSE = 10;
 const int VITESSE=180;
 const int VITESSE_RAPIDE=255;
-int var=0;
+char currentState='p';
+char var;
 
 
 void setup() {
@@ -45,6 +46,8 @@ void setup() {
 
 void loop() {
   //Reception Bluetooth
+  long distanceFront1 = getDistance(FRONT_TRIGGER1, FRONT_ECHO1);
+  long distanceFront2 = getDistance(FRONT_TRIGGER2, FRONT_ECHO2);
   if (Serial1.available()) {  // Si on a bien reçu quelque chose
     String received = Serial1.readStringUntil('\n'); // Lit le message complet
     if (received != "OK+CONN" && received != "OK+LOST"){
@@ -60,96 +63,109 @@ void loop() {
         Serial.println("Déconnexion détectée, received ignorée");
         return;
       }
+       var=received.charAt(0);
     }
-     switch (received.charAt(0)){
-      case 'o':
-        while(received.charAt(0)!='p'){
-          long distanceFront1 = getDistance(FRONT_TRIGGER1, FRONT_ECHO1);
-          long distanceFront2 = getDistance(FRONT_TRIGGER2, FRONT_ECHO2);
-          long distanceRear  = getDistance(REAR_TRIGGER, REAR_ECHO);
-          if (distanceFront1 < DISTANCE_SEUIL && distanceFront1 != 0 || distanceFront2 < DISTANCE_SEUIL && distanceFront2 != 0) {
-            reculer();
-            delay(400);
-            arreter();
-          }
-          if (distanceRear > DISTANCE_SEUIL && distanceRear != 0) {
-            avancer();
-            delay(400);
-            arreter();
-          }
-          else{
-              avancer();
-          }
-          String received = Serial1.readStringUntil('\n'); // Lit le message complet
-          if (received != "OK+CONN" && received != "OK+LOST"){
-            received.trim();
-            if (received.startsWith("OK+CONN")) {
-              received = received.substring(7);
-            }else if (received.startsWith("OK+LOST")) {
-          Serial.println("Déconnexion détectée, received ignorée");
-          return;
-        }
-        }
-        }
-        break;
-      case 'm': 
-        arreter();
-        break;
-      case 'z': 
-        avancer();
-        break;
-      case 's': 
-        reculer();
-        break;
-      case 'q': 
-        gauche();
-        break;
-      case 'd': 
-        droite();
-        break;
-      case 'a': 
-        avancerGauche();
-        break;
-      case 'e': 
-        avancerDroite();
-        break;
-      case 'w': 
-        reculerGauche();
-        break;
-      case 'x': 
-        reculerDroite();
-        break;
-      case 't': 
-        avancerRapide();
-        break;
-      case 'g': 
-        reculerRapide();
-        break;
-      case 'f': 
-        gaucheRapide();
-        break;
-      case 'h': 
-        droiteRapide();
-        break;
-      case 'r': 
-        avancerGauche();
-        break;
-      case 'y': 
-        avancerDroite();
-        break;
-      case 'v': 
-        reculerGauche();
-        break;
-      case 'b': 
-        reculerDroite();
-        break;
-    }
+  }else{
+    var = 'n';
   }
-    
-}
- 
    
 
+  
+  if (var=='p'){
+    currentState='p';
+  }
+  if(var=='o'){
+    currentState='o';
+  }
+
+  Serial.println(currentState);
+    
+  if (currentState=='o'){
+      modeAuto(distanceFront1,distanceFront2);
+  }
+  else {
+      modeManuel(var);
+    }
+}
+
+void modeManuel(char val){
+  switch(val){
+      
+        case 'm': 
+          arreter();
+          break;
+        case 'z': 
+          avancer();
+          break;
+        case 's': 
+          reculer();
+          break;
+        case 'q': 
+          gauche();
+          break;
+        case 'd': 
+          droite();
+          break;
+        case 'a': 
+          avancerGauche();
+          break;
+        case 'e': 
+          avancerDroite();
+          break;
+        case 'w': 
+          reculerGauche();
+          break;
+        case 'x': 
+          reculerDroite();
+          break;
+        case 't': 
+          avancerRapide();
+          break;
+        case 'g': 
+          reculerRapide();
+          break;
+        case 'f': 
+          gaucheRapide();
+          break;
+        case 'h': 
+          droiteRapide();
+          break;
+        case 'r': 
+          avancerGauche();
+          break;
+        case 'y': 
+          avancerDroite();
+          break;
+        case 'v': 
+          reculerGauche();
+          break;
+        case 'b': 
+          reculerDroite();
+          break;
+      }
+}
+   
+void modeAuto(long distanceFront1,long distanceFront2){
+  long distanceRear  = getDistance(REAR_TRIGGER, REAR_ECHO);
+  if (distanceFront1 > DISTANCE_SEUIL || distanceFront1 == 0 && distanceFront2 > DISTANCE_SEUIL || distanceFront2 == 0) {
+    avancer();
+    if (distanceFront1 < DISTANCE_SEUIL && distanceFront1 != 0 || distanceFront2 < DISTANCE_SEUIL && distanceFront2 != 0) {
+      reculer();
+      delay(400);
+      droite();
+      delay(500);
+    }
+  } 
+  else {
+    reculer();
+    delay(400);
+    droite();
+    delay(500);
+  }
+  
+  // Petite pause pour ne pas saturer le bus série et laisser le temps aux moteurs
+  delay(100);
+}
 
 
 long getDistance(int trigPin, int echoPin) {
