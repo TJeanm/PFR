@@ -1,2 +1,8 @@
-Français;avance;avance de;avance sans fin;stop;recule;recule de;recule sans fin;tourne à droite;tourne à droite de;tourne à droite sans fin;tourne à gauche;tourne à gauche de;tourne à gauche sans fin;fait un tour;fait un demi tour;quitte le mode vocal;avance jusqu'à;tourne jusqu'à;réalise trajectoire;enregistre ma trajectoire;fin trajectoire;fait la trajectoire
-Anglais;forward;forward distance;forward endless;stop;backward;backward distance;backward endlessly;trun right;turn right of;turn right endlessly;trun left;turn left of;turn left endlessly;spin around;trun around;exit voice mode;move forward to;turn foward to;execute trajectory;record trajectory;end trajectory;do trajectory
+commande francais,commande anglais,type d’info,fonction turtle associée,caractère associé
+avance,forward,commande,forward,z
+recule,backward,commande,backward,s
+tourne à droite,turn right,commande,right,d
+tourne à gauche,turn left,commande,left,q
+Demi-tour,turn around,commande,,c
+quitte le mode vocal,exit voice mode,logiciel,,e
+enregistre le trajectoire,record trajectory,logiciel,,n
