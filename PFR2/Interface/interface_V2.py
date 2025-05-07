@@ -123,6 +123,7 @@ class MenuApp:
             self.selected_index = 0
         elif choice == CHANGER_LANGUE:
             print("Changer la langue sélectionné")
+            print(f"Langue sélectionnée : {choisir_langue()}")
         elif choice == CARTOGRAPHIE:
             print("Réalisation de la cartographie")
 
@@ -176,6 +177,31 @@ class MenuApp:
             self.root.quit()
 
         self.update_menu()
+
+    def changer_langue():
+        import csv
+
+import csv
+
+def choisir_langue():
+    with open("Casse_Noisette/liste_commande_vocal_v2.csv", mode='r', encoding='utf-8') as f:
+        reader = csv.reader(f, delimiter=';')
+        header = next(reader)
+        langues = header[2:]  # On ignore les deux premières colonnes ("caractère associé", "type d’info")
+
+    print("Veuillez choisir une langue :")
+    for idx, langue in enumerate(langues, 1):
+        print(f"{idx}. {langue}")
+
+    while True:
+        choix = input("Entrez le numéro de votre choix : ")
+        if choix.isdigit():
+            choix = int(choix)
+            if 1 <= choix <= len(langues):
+                return langues[choix - 1]
+        print("Choix invalide, veuillez réessayer.")
+    
+
 
 
 if __name__ == "__main__":

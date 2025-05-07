@@ -1,6 +1,10 @@
 import asyncio
 from communication_HM10 import communication
 import csv
+import os
+import speech_recognition as sr
+import pyaudio
+from gtts import gTTS
 
 def lire_choix_langue(fichier_choix):
     try:
@@ -23,12 +27,8 @@ def obtenir_code_langue(nom_langue):
     prefixe = nom_langue[:2].lower()  # Minuscule
     return f"{prefixe}-{prefixe.upper()}"  # Forme ISO dynamique (ex. "fr-FR", "en-EN")
 
-async def ecrire_commande_fichier(commande,fich):
+def ecrire_commande_fichier(commande,fich):
     print(commande)
-    com = communication()
-    await com.init_HM10()
-    await com.envoie_bluetooth("p")
-    await com.envoie_bluetooth(commande)
     with open(fich, "w", encoding="utf-8") as fichier:
         fichier.write(commande + "\n")
 
@@ -42,7 +42,7 @@ historique_commandes=[]
 
 def lire_commande_fichier():
 
-    fichier_path = "ligne_vocal.txt"
+    fichier_path = os.getcwd() + "\\Casse_Noisette\\ligne_vocal.txt"
     try:
         with open(fichier_path, "r", encoding="utf-8") as fichier:
             print("le fichier a bien été ouvert.")
@@ -59,7 +59,7 @@ def lire_commande_fichier():
 def parcourir_commande(commande_texte) :
 
     structure_commande={"commande":"","logiciel":"","angle_distance":0,"direction":"","envoi":""}
-    fichier_path = "liste_commande_vocal_v2.csv"
+    fichier_path = os.getcwd() + "\\Casse_Noisette\\liste_commande_vocal_v2.csv"
     try:
         with open(fichier_path, "r", encoding="utf-8") as fichier:
             reader = csv.reader(fichier, delimiter=',')
@@ -131,10 +131,7 @@ def executer_logiciel():
 
 
 async def main():
-    
-    # await com.envoie_bluetooth("o")
-
-    numero, langue = 1, "Francais" #lire_choix_langue("choix_langue.txt")
+    numero, langue = lire_choix_langue(os.getcwd() + "\\Casse_Noisette\\choix_langue.txt")
     code_langue = obtenir_code_langue(langue)
     print(f"Langue choisie : {langue} (code : {code_langue})")
     #print(sr.Microphone.list_microphone_names())
@@ -148,7 +145,7 @@ async def main():
             print("End!")
             
         result = r.recognize_google(audio_data, language=code_langue)
-        await ecrire_commande_fichier(result,"ligne_vocal.txt")
+        ecrire_commande_fichier(result,os.getcwd() + "\\Casse_Noisette\\/ligne_vocal.txt")
         print ("Vous avez dit : ", result)
     except Exception as e : 
         print("pb")
@@ -157,7 +154,11 @@ async def main():
     structure_commande=parcourir_commande(lire_commande_fichier())
     print(structure_commande)
     executer_mouvement(structure_commande)
-    await ecrire_commande_fichier(structure_commande["envoi"],"envoi_commande.txt")
+    
+    com = communication()
+    #await com.init_HM10()
+    #await com.envoie_bluetooth("p")
+    await com.envoie_bluetooth(structure_commande["envoi"])
     print(structure_commande)
 
 
