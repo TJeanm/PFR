@@ -26,10 +26,9 @@ def obtenir_code_langue(nom_langue):
     prefixe = nom_langue[:2].lower()  # Minuscule
     return f"{prefixe}-{prefixe.upper()}"  # Forme ISO dynamique (ex. "fr-FR", "en-EN")
 
-def ecrire_commande_fichier(commande):
-    with open("ligne_vocal.txt", "w", encoding="utf-8") as fichier:
+def ecrire_commande_fichier(commande,fich):
+    with open(fich, "w", encoding="utf-8") as fichier:
         fichier.write(commande + "\n")
-    #print("Commande écrite dans 'ligne_vocal.txt'.")
 
 numero, langue = lire_choix_langue("choix_langue.txt")
 code_langue = obtenir_code_langue(langue)
@@ -47,7 +46,7 @@ try :
         print("End!")
         
     result = r.recognize_google(audio_data, language=code_langue)
-    ecrire_commande_fichier(result)
+    ecrire_commande_fichier(result,"ligne_vocal.txt")
     print ("Vous avez dit : ", result)
 except Exception as e : 
     print("pb")
@@ -122,8 +121,6 @@ def parcourir_commande(commande_texte) :
     historique_commandes.append(structure_commande)
     return structure_commande
 
-def ecrire_fichier(structure_commande):
-    return
 
 def executer_commande(structure_commande):
     if structure_commande["commande"]!="":
@@ -171,6 +168,6 @@ print(structure_commande)
 
 executer_mouvement(structure_commande)
 
-ecrire_commande_fichier(structure_commande["envoi"])
+ecrire_commande_fichier(structure_commande["envoi"],"envoi_commande.txt")
 
 print(structure_commande)
