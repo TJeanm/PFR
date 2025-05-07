@@ -26,7 +26,7 @@ QUITTER = "❌ Quitter"
 INITIALISATION_UTILISATEUR = "Programmes\\initialisation_utilisateur.py"
 LISTE_COMMANDE_VOCAL = "Casse_Noisette/liste_commande_vocal_v3.csv"
 ACTIVATION_VOCAL = "Programmes\\commande_vocale_finale.py"
-ACTIVATION_MANETTE = "Programmes\\pilotage.py"
+ACTIVATION_MANETTE = "Programmes\\Com_Manette_V3.py"
 
 
 class MenuApp:
