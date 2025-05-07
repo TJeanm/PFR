@@ -63,6 +63,7 @@ void loop() {
         Serial.println("Déconnexion détectée, received ignorée");
         return;
       }
+      Serial.println(received.charAt(0));
        var=received.charAt(0);
     }
   }else{
@@ -78,7 +79,6 @@ void loop() {
     currentState='o';
   }
 
-  Serial.println(currentState);
     
   if (currentState=='o'){
       modeAuto(distanceFront1,distanceFront2);
