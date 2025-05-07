@@ -43,3 +43,8 @@ class communication :
         await self.client.write_gatt_char(UART_CHAR_UUID, data, response=False)
         print(f"📤 Envoyé : {lettre}")
         await asyncio.sleep(LOOP_DELAY)
+    
+    async def close(self):
+        if self.client and self.client.is_connected:
+            await self.client.disconnect()
+            print("🔌 Déconnecté.")
