@@ -4,7 +4,7 @@ import os
 import platform
 import csv
 from PIL import Image, ImageTk
-
+from tkinter import simpledialog, messagebox
 
 # Définition des constantes
 UTILISATEUR = "👤 Utilisateur"
@@ -32,7 +32,21 @@ ACTIVATION_MANETTE = "Programmes\\Com_Manette_V3.py"
 LISTE_COMMANDE_VOCAL = "Casse_Noisette\\liste_commande_vocal_v3.csv"
 CARTE = "Casse_Noisette/plan_Toulouse.jpeg"
 BIENVENUE = "Casse_Noisette/image_PFR.png"
+FICHIER_MDP = "Casse_Noisette/mdp_admin.txt"
 
+# Fonction pour lire le mot de passe enregistré
+def lire_mot_de_passe():
+    if not os.path.exists(FICHIER_MDP):
+        with open(FICHIER_MDP, "w") as f:
+            f.write("Groupe5")
+        return "Groupe5"
+    with open(FICHIER_MDP, "r") as f:
+        return f.read().strip()
+
+# Fonction pour écrire un nouveau mot de passe
+def ecrire_mot_de_passe(nouveau_mdp):
+    with open(FICHIER_MDP, "w") as f:
+        f.write(nouveau_mdp.strip())
 
 class MenuApp:
     def __init__(self, root):
@@ -111,39 +125,59 @@ class MenuApp:
     def select_option(self, event):
         choice = self.current_menu[self.selected_index]
 
-        if self.langue_menu_actif:
-            self.langue_selectionnee = choice
-            self.langue_menu_actif = False
-            self.current_menu = self.user_menu
-            self.selected_index = 0
-            self.update_menu()
-            return
-
         if choice == UTILISATEUR:
             subprocess.run(["python", INITIALISATION_UTILISATEUR])
             self.current_menu = self.user_menu
         elif choice == ADMINISTRATEUR:
-            self.current_menu = self.admin_menu
+            if self.verifier_mot_de_passe():
+                self.current_menu = self.admin_menu
+            else:
+                self.current_menu = self.main_menu
+
+        ### Gestion de la sélection d'une option MODE UTILISATEUR ###
+        elif choice == MODE_AUTOMATIQUE:
+            print("Mode automatique activé")
+
         elif choice == MODE_MANUEL:
             self.current_menu = self.manuel_menu
+            self.selected_index = 0
+        
         elif choice == MODE_IMAGE:
             self.current_menu = self.image_menu
+            self.selected_index = 0
+
         elif choice == CHANGER_LANGUE:
-            self.ouvrir_menu_langue()
-            return
+            print("Changer la langue sélectionné")
+            print(f"Langue sélectionnée : {self.langue_selectionnee}")
+
         elif choice == CARTOGRAPHIE:
             print("Réalisation de la cartographie")
+
+        # ### Gestion de la sélection d'une option MANUEL ###
         elif choice == AVEC_MANETTE:
+            print("Contrôle avec la manette activé")
             subprocess.run(["python", ACTIVATION_MANETTE])
+        
         elif choice == AVEC_VOIX:
+            print("Contrôle avec la voix activé")
             subprocess.run(["python", ACTIVATION_VOCAL])
+
+        # ### Gestion de la sélection d'une option IMAGE ###
         elif choice == SUIVEUR:
             print("Recherche d'une balle...")
+            print("Balle trouvée, suivi de la balle")
+        
         elif choice == DETECTION:
             print("Détection d’objet activée")
+
+        # ### Gestion de la sélection d'une option ADMINISTRATEUR ###
+        elif choice == CHANGER_MDP:
+            self.changer_mot_de_passe()
+        
         elif choice == AJOUTER_LANGUE:
             self.afficher_aide_ajout_langue()
             return
+
         elif choice == RETOUR:
             if self.current_menu in [self.user_menu, self.admin_menu]:
                 self.current_menu = self.main_menu
@@ -155,20 +189,33 @@ class MenuApp:
         self.selected_index = 0
         self.update_menu()
 
-    def ouvrir_menu_langue(self):
-        try:
-            with open(LISTE_COMMANDE_VOCAL, mode='r', encoding='utf-8') as f:
-                reader = csv.reader(f, delimiter=';')
-                header = next(reader)
-                langues = [l.strip() for l in header[2:] if l.strip()]
-        except Exception as e:
-            print(f"Erreur lors de la lecture des langues : {e}")
-            langues = ["Aucune langue disponible"]
+    def verifier_mot_de_passe(self):
+        mot_de_passe = lire_mot_de_passe()
+        essais = 0
+        while essais < 3:
+            saisie = simpledialog.askstring("Mot de passe", "Entrez le mot de passe administrateur :")
+            if saisie is None:
+                return False  # Annulé
+            if saisie == mot_de_passe:
+                return True
+            else:
+                essais += 1
+                messagebox.showerror("Erreur", f"Mot de passe incorrect ({essais}/3)")
+        messagebox.showinfo("Retour", "Trop d’essais. Retour au menu principal.")
+        return False
 
-        self.current_menu = langues + [RETOUR]
-        self.langue_menu_actif = True
-        self.selected_index = 0
-        self.update_menu()
+    def changer_mot_de_passe(self):
+        mot_de_passe_actuel = lire_mot_de_passe()
+        ancien = simpledialog.askstring("Changer mot de passe", "Entrez l’ancien mot de passe :")
+        if ancien is None or ancien != mot_de_passe_actuel:
+            messagebox.showerror("Erreur", "Ancien mot de passe incorrect.")
+            return
+        nouveau = simpledialog.askstring("Nouveau mot de passe", "Entrez le nouveau mot de passe :")
+        if not nouveau:
+            messagebox.showerror("Erreur", "Mot de passe vide.")
+            return
+        ecrire_mot_de_passe(nouveau)
+        messagebox.showinfo("Succès", "Mot de passe modifié avec succès.")
 
     def afficher_aide_ajout_langue(self):
         self.label.place_forget()
@@ -182,12 +229,12 @@ class MenuApp:
         self.help_frame.pack(pady=30)
 
         try:
-            if platform.system() == "Windows": # Windows
+            if platform.system() == "Windows":  # Windows
                 os.startfile(LISTE_COMMANDE_VOCAL)
             elif platform.system() == "Darwin":  # macOS
-                    subprocess.run(["open", LISTE_COMMANDE_VOCAL])
+                subprocess.run(["open", LISTE_COMMANDE_VOCAL])
             else:  # Linux
-                    subprocess.run(["xdg-open", LISTE_COMMANDE_VOCAL])
+                subprocess.run(["xdg-open", LISTE_COMMANDE_VOCAL])
         except Exception as e:
             print(f"❌ Impossible d’ouvrir le fichier : {e}")
 

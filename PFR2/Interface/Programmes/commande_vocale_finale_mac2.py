@@ -2,190 +2,99 @@ import asyncio
 from communication_HM10 import communication
 import csv
 import os
-import sys
 import speech_recognition as sr
 import pyaudio
 from gtts import gTTS
-
+import sys
+from pathlib import Path
 
 def lire_choix_langue(fichier_choix):
     try:
         with open(fichier_choix, "r", encoding="utf-8") as fichier:
-            contenu = fichier.read()
-            lignes = contenu.splitlines()
+            lignes = fichier.readlines()
             if len(lignes) >= 2:
-                # Le numéro de la langue est la première ligne et le nom de la langue est la deuxième
-                return lignes[0].strip(), lignes[1].strip()
+                numero_langue = lignes[0].strip()
+                nom_langue = lignes[1].strip()
+                return numero_langue, nom_langue
             else:
                 print("Fichier de choix langue incomplet.")
-                return lignes[0], lignes[1]
+                return None, None
     except FileNotFoundError:
-        print(f"Fichier introuvable : {fichier_choix}")
+        print(f"Fichier '{fichier_choix}' introuvable.")
         return None, None
 
-
 def obtenir_code_langue(nom_langue):
-    if not nom_langue or len(nom_langue) < 2:
+    if not isinstance(nom_langue, str) or len(nom_langue) < 2:
         raise ValueError(f"Nom de langue invalide : {nom_langue!r}")
     prefixe = nom_langue[:2].lower()
     return f"{prefixe}-{prefixe.upper()}"
-
 
 def ecrire_commande_fichier(commande, fich):
     print(commande)
     with open(fich, "w", encoding="utf-8") as fichier:
         fichier.write(commande + "\n")
 
-
-# traitement
 historique_commandes = []
 
-
-def lire_commande_fichier():
-    # calcul du chemin de ligne_vocal.txt comme frère de Programmes
-    base_dir = os.path.dirname(__file__)
-    interface_dir = os.path.abspath(os.path.join(base_dir, os.pardir))
-    fichier_path = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
-    # fichier_path="ligne_vocal.txt"
+def lire_commande_fichier(chemin_fichier):
     try:
-        with open(fichier_path, "r", encoding="utf-8") as fichier:
+        with open(chemin_fichier, "r", encoding="utf-8") as fichier:
             print("Le fichier a bien été ouvert.")
-            lignes = fichier.read().split()
+            lignes = fichier.read().splitlines()
             if not lignes:
                 print("Le fichier de commande est vide.")
                 return []
             return lignes
     except FileNotFoundError:
-        print(f"Erreur : fichier {fichier_path} introuvable.")
+        print(f"Erreur : fichier {chemin_fichier} introuvable.")
         return []
 
-
-def parcourir_commande(commande_texte, numero_langue,historique_commandes):
-    structure_commande = {"commande": "", "logiciel": "", "angle_distance": 0, "direction": "", "envoi": ""}
-    fichier_csv = os.path.join(os.path.dirname(__file__), os.pardir, "Casse_Noisette", "liste_commande_vocal_v2.csv")
-    #fichier_path = "liste_commande_vocal_v2.csv"
-    try:
-        with open(fichier_csv, "r", encoding="utf-8") as fichier:
-            reader = csv.reader(fichier, delimiter=',')
-
-            for mot in commande_texte:
-                print(mot)
-                # on teste si le mot est un nombre
-                if mot.isdigit():
-                    print("nombre détécté")
-                    structure_commande["angle_distance"] = int(mot)
-                else:
-                    fichier.seek(0)  # on remet le curseur de lecture au début du fichier
-                    # on teste si le mot est une commande
-                    for ligne in reader:
-                        if ligne[int(numero_langue) + 1] == mot:
-                            print("mot détécté")
-                            if ligne[1] == "commande":
-                                print("commande detectee")
-                                historique_commandes.append(structure_commande.copy())
-                                structure_commande = {"commande": ligne[0], "logiciel": "", "angle_distance": 0,
-                                                      "direction": "", "envoi": ""}
-
-                            elif ligne[1] == "logiciel":
-                                structure_commande["logiciel"] = ligne[0]
-
-                            elif ligne[1] == "direction":
-                                structure_commande["direction"] = ligne[0]
-
-                            elif ligne[1] == "vitesse":
-                                structure_commande["vitesse"] = ligne[0]
-
-                            elif ligne[1] == "unité":
-                                structure_commande["unité"] = ligne[0]
-
-    except FileNotFoundError:
-        print("Erreur : fichier ligne_vocal.txt introuvable.")
-        return
-
+def parcourir_commande(commande_texte):
+    structure_commande = {"texte": commande_texte, "envoi": "TEST"}  # Exemple temporaire
     historique_commandes.append(structure_commande)
-    return historique_commandes
-
-
-def executer_mouvement(historique_commandes):
-    for i in range(1, len(historique_commandes)):
-        print("traitement")
-        print()
-        print(historique_commandes[i])
-        if historique_commandes[i]["commande"] == 'f':  # avance
-            if historique_commandes[i]["direction"] == 'l':  # avance gauche
-                historique_commandes[i]["envoi"] = 'a'
-            elif historique_commandes[i]["direction"] == 'r':  # avance droite
-                historique_commandes[i]["envoi"] = 'e'
-            else:
-                print("traite avance")
-                historique_commandes[i]["envoi"] = 'z'  # avance normale
-
-        elif historique_commandes[i]["commande"] == 'b':
-            if historique_commandes[i]["direction"] == 'l':
-                historique_commandes[i]["envoi"] = 'w'
-            elif historique_commandes[i]["direction"] == 'r':
-                historique_commandes[i]["envoi"] = 'x'
-            else:
-                historique_commandes[i]["envoi"] = 's'
-
-        elif historique_commandes[i]["commande"] == "t":
-            if historique_commandes[i]["direction"] == 'l':
-                historique_commandes[i]["envoi"] = 'q'
-            else:
-                historique_commandes[i]["envoi"] = 'd'
-
-        elif historique_commandes[i]["commande"] == "c":
-            historique_commandes[i]["envoi"] = "c"
-
-
-def executer_logiciel(structure_commande):
-    pass
-
+    return structure_commande
 
 async def main():
-    # calcul du chemin de choix_langue.txt comme frère de Programmes
-    base_dir = os.path.dirname(__file__)
-    interface_dir = os.path.abspath(os.path.join(base_dir, os.pardir))
-    chemin = os.path.join(interface_dir, "Casse_Noisette", "choix_langue.txt")
-    #chemin = "choix_langue.txt"
+    # __file__ est dans Interface/Programmes
+    dossier_programmes = Path(__file__).resolve().parent
+    dossier_interface = dossier_programmes.parent
 
-    numero, langue = lire_choix_langue(chemin)
-    print(lire_choix_langue(chemin))
-    print(numero)
+    choix_langue_path = dossier_interface / "Casse_Noisette" / "choix_langue.txt"
+    ligne_vocal_path = dossier_interface / "Casse_Noisette" / "ligne_vocal.txt"
+
+    # Lecture de la langue choisie
+    numero, langue = lire_choix_langue(choix_langue_path)
     if langue is None:
+        print("\u26d4 Aucune langue choisie, arrêt du programme.")
         sys.exit(1)
 
-    code_langue = obtenir_code_langue(langue)
+    try:
+        code_langue = obtenir_code_langue(langue)
+    except ValueError as e:
+        print(f"Erreur dans le code langue : {e}")
+        sys.exit(1)
+
     print(f"Langue choisie : {langue} (code : {code_langue})")
 
+    # Lecture et traitement des commandes vocales
     try:
-        r = sr.Recognizer()
-        micro = sr.Microphone()
-        with micro as source:
-            print("Speak!")
-            audio_data = r.listen(source)
-            print("End!")
+        lignes = lire_commande_fichier(ligne_vocal_path)
+        if not lignes:
+            return
+        for result in lignes:
+            ecrire_commande_fichier(result, ligne_vocal_path)
+            print("Vous avez dit :", result)
+            structure_commande = parcourir_commande(result)
+            print(structure_commande)
+            # executer_mouvement(structure_commande)  # Décommenter si disponible
 
-        result = r.recognize_google(audio_data, language=code_langue)
-        # écriture du résultat dans ligne_vocal.txt
-        ligne_vocal = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
-        ecrire_commande_fichier(result, ligne_vocal)
-        print("Vous avez dit :", result)
-    except Exception:
-        print("Problème reconnaissance vocale")
-
-    historique_commandes=[]
-    structure_commande=parcourir_commande(lire_commande_fichier(), numero,historique_commandes)
-    print(structure_commande)
-    executer_mouvement(historique_commandes)
-    envoi=historique_commandes[1]["envoi"]
-    print(historique_commandes)
-    print(envoi)
-    com = communication()
-    await com.init_HM10()
-    await com.envoie_bluetooth(envoi)
-    #print(structure)
-
+            com = communication()
+            # await com.init_HM10()
+            # await com.envoie_bluetooth("p")
+            await com.envoie_bluetooth(structure_commande["envoi"])
+            print("Commande envoyée :", structure_commande)
+    except Exception as e:
+        print("Erreur lors du traitement des commandes vocales :", e)
 
 if __name__ == "__main__":
     asyncio.run(main())
