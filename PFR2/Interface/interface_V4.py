@@ -139,7 +139,7 @@ class MenuApp:
 
         ### Gestion de la sélection d'une option MODE UTILISATEUR ###
         elif choice == MODE_AUTOMATIQUE:
-            print("Mode automatique activé")
+            subprocess.run(["python", ACTIVATION_AUTOMATIQUE])
         elif choice == MODE_MANUEL:
             self.current_menu = self.manuel_menu
             self.selected_index = 0
