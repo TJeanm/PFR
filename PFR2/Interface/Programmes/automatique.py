@@ -4,11 +4,11 @@ from communication_HM10 import communication
 
 async def main():
     com = communication()
-    await com.init_HM10()
+    #await com.init_HM10()
     await com.envoie_bluetooth("o")
     while True:
         if keyboard.is_pressed('l'):
-            await com.envoie_bluetooth("l")
+            await com.envoie_bluetooth("p")
             print("Test fini")
             break
 

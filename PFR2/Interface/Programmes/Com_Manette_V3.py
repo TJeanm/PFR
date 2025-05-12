@@ -9,7 +9,7 @@ UART_CHAR_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"
 TARGET_NAME = "robot2"
 SCAN_TIMEOUT = 5.0  # secondes
 
-# Vos commandes
+# Les commandes
 ARRET = "m"
 AVANCE = "z"
 RECULE = "s"
@@ -39,7 +39,7 @@ LOOP_DELAY = 0.02
 
 async def main():
         com = communication()
-        await com.init_HM10()
+        #await com.init_HM10()
         # 3) Init pygame + manette
         pygame.init()
         pygame.joystick.init()
@@ -68,7 +68,7 @@ async def main():
                     else:
                         axes.append(1 if v > 0 else -1)
 
-                # logique de choix de cmd (idem votre code)
+                # logique de choix de cmd
                 if btn[2] == 1:
                     cmd = MODE_AUTO
                 elif btn[1] == 1:

@@ -28,6 +28,9 @@ QUITTER = "❌ Quitter"
 INITIALISATION_UTILISATEUR = "Programmes\\initialisation_utilisateur.py"
 ACTIVATION_VOCAL = "Programmes\\commande_vocale_finale.py"
 ACTIVATION_MANETTE = "Programmes\\Com_Manette_V3.py"
+ACTIVATION_AUTOMATIQUE = "Programmes\\automatique.py"
+ACTIVATION_SUIVIE = "Programmes\\image_suivie.py"
+ACTIVATION_DETECTION = "Programmes\\image_detection.py"
 
 LISTE_COMMANDE_VOCAL = "Casse_Noisette\\liste_commande_vocal_v3.csv"
 CARTE = "Casse_Noisette/plan_Toulouse.jpeg"
@@ -137,19 +140,15 @@ class MenuApp:
         ### Gestion de la sélection d'une option MODE UTILISATEUR ###
         elif choice == MODE_AUTOMATIQUE:
             print("Mode automatique activé")
-
         elif choice == MODE_MANUEL:
             self.current_menu = self.manuel_menu
             self.selected_index = 0
-        
         elif choice == MODE_IMAGE:
             self.current_menu = self.image_menu
             self.selected_index = 0
-
         elif choice == CHANGER_LANGUE:
             print("Changer la langue sélectionné")
             print(f"Langue sélectionnée : {self.langue_selectionnee}")
-
         elif choice == CARTOGRAPHIE:
             print("Réalisation de la cartographie")
 
@@ -157,27 +156,22 @@ class MenuApp:
         elif choice == AVEC_MANETTE:
             print("Contrôle avec la manette activé")
             subprocess.run(["python", ACTIVATION_MANETTE])
-        
         elif choice == AVEC_VOIX:
             print("Contrôle avec la voix activé")
             subprocess.run(["python", ACTIVATION_VOCAL])
 
         # ### Gestion de la sélection d'une option IMAGE ###
         elif choice == SUIVEUR:
-            print("Recherche d'une balle...")
-            print("Balle trouvée, suivi de la balle")
-        
+            subprocess.run(["python", ACTIVATION_SUIVIE])
         elif choice == DETECTION:
-            print("Détection d’objet activée")
+            subprocess.run(["python", ACTIVATION_DETECTION])
 
         # ### Gestion de la sélection d'une option ADMINISTRATEUR ###
         elif choice == CHANGER_MDP:
             self.changer_mot_de_passe()
-        
         elif choice == AJOUTER_LANGUE:
             self.afficher_aide_ajout_langue()
             return
-
         elif choice == RETOUR:
             if self.current_menu in [self.user_menu, self.admin_menu]:
                 self.current_menu = self.main_menu
