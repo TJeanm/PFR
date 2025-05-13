@@ -2,11 +2,9 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import csv  
-import os
 
 image_path = 'Casse_Noisette/photo_test/3_balle_rose.jpg'
 csv_filename = 'Casse_Noisette/resultats_detection.csv'
-
 
 COLOR_RANGES = {
     "Bleu": ([100, 150, 50], [140, 255, 255]),
@@ -69,7 +67,7 @@ def detect_objects(image):
     return results
 
 # Chargement de l’image
-
+image_path = 'M.png'
 img_capture = cv2.imread(image_path)
 if img_capture is None:
     print("Erreur : Impossible de charger l'image.")
@@ -86,6 +84,7 @@ else:
     print("Aucun objet détecté.")
 
 
+csv_filename = 'resultats_detection.csv'
 with open(csv_filename, mode='w', newline='') as csv_file:
     writer = csv.writer(csv_file)
     writer.writerow(['Forme', 'Couleur', 'X', 'Y'])  

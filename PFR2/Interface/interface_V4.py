@@ -31,6 +31,8 @@ ACTIVATION_MANETTE = "Programmes\\Com_Manette.py"
 ACTIVATION_AUTOMATIQUE = "Programmes\\automatique.py"
 ACTIVATION_SUIVIE = "Programmes\\image_suivie.py"
 ACTIVATION_DETECTION = "Programmes\\image_detection.py"
+ACTIVATION_CARTOGRAPHIE = "Programmes\\lidar.py"
+
 
 LISTE_COMMANDE_VOCAL = "Casse_Noisette\\liste_commande_vocal.csv"
 CARTE = "Casse_Noisette/plan_Toulouse.jpeg"
@@ -151,6 +153,7 @@ class MenuApp:
             print(f"Langue sélectionnée : {self.langue_selectionnee}")
         elif choice == CARTOGRAPHIE:
             print("Réalisation de la cartographie")
+            subprocess.run(["python", ACTIVATION_CARTOGRAPHIE])
 
         # ### Gestion de la sélection d'une option MANUEL ###
         elif choice == AVEC_MANETTE:
