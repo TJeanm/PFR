@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 import csv  
 import os
 
-image_path = 'Casse_Noisette/photo_test/3_balle_rose.jpg'
-csv_filename = 'Casse_Noisette/resultats_detection.csv'
+image_path = 'Casse_Noisette/photo_test/6_balle_jaune.jpg'
+csv_filename = 'Casse_Noisette/detection_all.csv'
 
 
 COLOR_RANGES = {

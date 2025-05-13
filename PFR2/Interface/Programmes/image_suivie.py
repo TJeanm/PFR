@@ -5,7 +5,7 @@ import asyncio
 import csv
 from communication_HM10 import communication
 
-CHEMIN_POSITION = "Casse_Noisette/resultats_detection.csv"
+CHEMIN_POSITION = "Casse_Noisette/detection_une_couleur.csv"
 ACTIVATION_DETECTION = "Programmes\\detection_une_couleur.py"
 
 POS_MIN = 0

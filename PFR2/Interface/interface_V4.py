@@ -30,7 +30,7 @@ ACTIVATION_VOCAL = "Programmes\\commande_vocale_finale.py"
 ACTIVATION_MANETTE = "Programmes\\Com_Manette.py"
 ACTIVATION_AUTOMATIQUE = "Programmes\\automatique.py"
 ACTIVATION_SUIVIE = "Programmes\\image_suivie.py"
-ACTIVATION_DETECTION = "Programmes\\image_detection.py"
+ACTIVATION_DETECTION = "Programmes\\detection_une_couleur.py"
 ACTIVATION_CARTOGRAPHIE = "Programmes\\lidar.py"
 
 
