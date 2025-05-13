@@ -37,6 +37,25 @@ def ecrire_commande_fichier(commande, fich):
     with open(fich, "w", encoding="utf-8") as fichier:
         fichier.write(commande + "\n")
 
+def recuperer_audio():
+    try:
+        r = sr.Recognizer()
+        micro = sr.Microphone()
+        with micro as source:
+            print("Speak!")
+            audio_data = r.listen(source)
+            print("End!")
+
+        result = r.recognize_google(audio_data, language=code_langue)
+        # écriture du résultat dans ligne_vocal.txt
+        ligne_vocal = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
+        ecrire_commande_fichier(result, ligne_vocal)
+        print("Vous avez dit :", result)
+        return 1
+    except Exception:
+        print("Problème reconnaissance vocale")
+        return 0
+
 
 def lire_commande_fichier():
     # calcul du chemin de ligne_vocal.txt comme frère de Programmes
@@ -320,24 +339,7 @@ async def main():
         code_langue = obtenir_code_langue(langue)
         print(f"Langue choisie : {langue} (code : {code_langue})")
 
-
-        try:
-            r = sr.Recognizer()
-            micro = sr.Microphone()
-            with micro as source:
-                print("Speak!")
-                audio_data = r.listen(source)
-                print("End!")
-
-            result = r.recognize_google(audio_data, language=code_langue)
-            # écriture du résultat dans ligne_vocal.txt
-            ligne_vocal = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
-            ecrire_commande_fichier(result, ligne_vocal)
-            print("Vous avez dit :", result)
-            new_reco = 1
-        except Exception:
-            print("Problème reconnaissance vocale")
-            new_reco = 0
+        new_reco=recuperer_audio()
 
         if new_reco :
             liste_commandes=[]
