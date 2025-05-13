@@ -19,6 +19,8 @@ l;direction;gauche;left
 s;vitesse;rapidement;fast
 s;vitesse;rapide;fast
 s;vitesse;vite;fast
+cm;unité;centimètre;centimeter
+me;unité;mètre;meters
 m;commande;arrêt;stop
 e;commande;quitte;quit
 e;commande;quitter;quit
