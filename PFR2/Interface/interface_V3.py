@@ -111,6 +111,21 @@ class MenuApp:
     def select_option(self, event):
         choice = self.current_menu[self.selected_index]
 
+        # Si on est dans le menu des langues
+        if self.langue_menu_actif:
+            choix_langue = self.current_menu[self.selected_index]
+            if choix_langue == RETOUR:
+                self.langue_menu_actif = False
+                self.current_menu = self.user_menu
+            else:
+                self.langue_selectionnee = choix_langue
+                self.langue_menu_actif = False
+                self.current_menu = self.user_menu
+            self.selected_index = 0
+            self.update_menu()
+            return  # Ne pas exécuter le reste
+
+
         if self.langue_menu_actif:
             self.langue_selectionnee = choice
             self.langue_menu_actif = False

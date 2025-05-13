@@ -3,9 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import csv  
 
-image_path = 'Casse_Noisette/photo_test/6_balle_jaune.jpg'
 csv_filename = 'Casse_Noisette/detection_all.csv'
-
+CHEMIN_IMAGE_A_LIRE = "Casse_Noisette/image_a_lire.txt"
 
 COLOR_RANGES = {
     "Bleu": ([100, 150, 50], [140, 255, 255]),
@@ -30,7 +29,7 @@ def detect_shape_from_contour(contour):
             return "Rectangle"
     elif num_vertices > 4:
         return "Cercle"
-    return "Non détecté"
+    return "Non detecte"
 
 # Fonction principale de détection
 def detect_objects(image):
@@ -67,35 +66,41 @@ def detect_objects(image):
             results.append((shape, color_name, (cx, cy)))
     return results
 
-# Chargement de l’image
-image_path = 'M.png'
-img_capture = cv2.imread(image_path)
-if img_capture is None:
-    print("Erreur : Impossible de charger l'image.")
-    exit()
+def execution(image_lecture) :
+    # Chargement de l’image
 
-# Détection des objets
-results = detect_objects(img_capture)
+    print("chemin image :", image_lecture)
+    img_capture = cv2.imread(image_lecture)
 
-# Résumé console
-if results:
-    for idx, (shape, color, pos) in enumerate(results, 1):
-        print(f"Objet {idx} : Forme = {shape}, Couleur = {color}, Position = {pos}")
-else:
-    print("Aucun objet détecté.")
+    if img_capture is None:
+        print("Erreur : Impossible de charger l'image.")
+        exit()
+
+    # Détection des objets
+    results = detect_objects(img_capture)
+
+    # Résumé console
+    #if results:
+    #    for idx, (shape, color, pos) in enumerate(results, 1):
+    #        print(f"Objet {idx} : Forme = {shape}, Couleur = {color}, Position = {pos}")
+    #else:
+    #    print("Aucun objet detecte.")
+
+    with open(csv_filename, mode='w', newline='') as csv_file:
+        writer = csv.writer(csv_file)
+        writer.writerow(['Forme', 'Couleur', 'X', 'Y']) 
+        for shape, color, (x, y) in results:
+            writer.writerow([shape, color, x, y])
+
+    print(f"Résultats enregistrés dans : {csv_filename}")
 
 
-csv_filename = 'resultats_detection.csv'
-with open(csv_filename, mode='w', newline='') as csv_file:
-    writer = csv.writer(csv_file)
-    writer.writerow(['Forme', 'Couleur', 'X', 'Y'])  
-    for shape, color, (x, y) in results:
-        writer.writerow([shape, color, x, y])
+    plt.imshow(cv2.cvtColor(img_capture, cv2.COLOR_BGR2RGB))
+    plt.title("Contours ajustés aux formes")
+    plt.axis("off")
+    plt.show()
 
-print(f"Résultats enregistrés dans : {csv_filename}")
+with open(CHEMIN_IMAGE_A_LIRE, "r") as f:
+    chemin_image = f.read().strip()
+execution(chemin_image)
 
-
-plt.imshow(cv2.cvtColor(img_capture, cv2.COLOR_BGR2RGB))
-plt.title("Contours ajustés aux formes")
-plt.axis("off")
-plt.show()

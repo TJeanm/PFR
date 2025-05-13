@@ -26,15 +26,16 @@ QUITTER = "❌ Quitter"
 
 # Définition des fichiers
 INITIALISATION_UTILISATEUR = "Programmes\\initialisation_utilisateur.py"
-ACTIVATION_VOCAL = "Programmes\\commande_vocale_finale.py"
+ACTIVATION_VOCAL = "Programmes\\commande_vocale_loop_avec_unites.py"
 ACTIVATION_MANETTE = "Programmes\\Com_Manette.py"
 ACTIVATION_AUTOMATIQUE = "Programmes\\automatique.py"
 ACTIVATION_SUIVIE = "Programmes\\image_suivie.py"
-ACTIVATION_DETECTION = "Programmes\\detection_une_couleur.py"
+ACTIVATION_DETECTION = "Programmes\\detection_all_simu.py"
 ACTIVATION_CARTOGRAPHIE = "Programmes\\lidar.py"
 
 
-LISTE_COMMANDE_VOCAL = "Casse_Noisette\\liste_commande_vocal.csv"
+LISTE_COMMANDE_VOCAL = "Casse_Noisette\\liste_commande_vocale.csv"
+LISTE_COMMANDE_VOCAL_LECTURE = "Casse_Noisette/liste_commande_vocale.csv"
 CARTE = "Casse_Noisette/plan_Toulouse.jpeg"
 BIENVENUE = "Casse_Noisette/image_PFR.png"
 FICHIER_MDP = "Casse_Noisette/mdp_admin.txt"
@@ -55,6 +56,8 @@ def ecrire_mot_de_passe(nouveau_mdp):
 
 class MenuApp:
     def __init__(self, root):
+        #subprocess.run(["python", INITIALISATION_UTILISATEUR])
+
         self.root = root
         self.root.title("Menu de Navigation")
         self.root.geometry("900x500")
@@ -129,9 +132,23 @@ class MenuApp:
 
     def select_option(self, event):
         choice = self.current_menu[self.selected_index]
+        # Si on est dans le menu des langues
+        if self.langue_menu_actif:
+            choix_langue = self.current_menu[self.selected_index]
+            if choix_langue == RETOUR:
+                self.langue_menu_actif = False
+                self.current_menu = self.user_menu
+            else:
+                self.langue_selectionnee = choix_langue
+                messagebox.showinfo("Langue sélectionnée", f"Langue définie sur : {choix_langue}")
+                self.langue_menu_actif = False
+                self.current_menu = self.user_menu
+            self.selected_index = 0
+            self.update_menu()
+            return  # Ne pas exécuter le reste
+
 
         if choice == UTILISATEUR:
-            subprocess.run(["python", INITIALISATION_UTILISATEUR])
             self.current_menu = self.user_menu
         elif choice == ADMINISTRATEUR:
             if self.verifier_mot_de_passe():
@@ -148,9 +165,8 @@ class MenuApp:
         elif choice == MODE_IMAGE:
             self.current_menu = self.image_menu
             self.selected_index = 0
-        elif choice == CHANGER_LANGUE:
-            print("Changer la langue sélectionné")
-            print(f"Langue sélectionnée : {self.langue_selectionnee}")
+        elif choice == CHANGER_LANGUE:     
+            self.ouvrir_menu_langue()
         elif choice == CARTOGRAPHIE:
             print("Réalisation de la cartographie")
             subprocess.run(["python", ACTIVATION_CARTOGRAPHIE])
@@ -234,6 +250,23 @@ class MenuApp:
                 subprocess.run(["xdg-open", LISTE_COMMANDE_VOCAL])
         except Exception as e:
             print(f"❌ Impossible d’ouvrir le fichier : {e}")
+    
+    def ouvrir_menu_langue(self):
+        try:
+            with open(LISTE_COMMANDE_VOCAL_LECTURE, mode='r', encoding='utf-8', newline='') as f:
+                reader = csv.reader(f, delimiter=';')
+                header = next(reader)
+                langues = [col.strip() for col in header[2:] if col.strip()]
+        except Exception as e:
+            print(f"Erreur lors de la lecture des langues : {e}")
+            langues = ["Aucune langue disponible"]
+
+        self.menu_langues = langues  # On garde la liste pour vérifier la sélection
+        self.current_menu = langues + [RETOUR]
+        self.langue_menu_actif = True
+        self.selected_index = 0
+        self.update_menu()
+
 
     def retour_depuis_aide(self):
         self.help_frame.pack_forget()

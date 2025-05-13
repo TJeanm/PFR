@@ -38,6 +38,10 @@ def ecrire_commande_fichier(commande, fich):
         fichier.write(commande + "\n")
 
 
+# traitement
+historique_commandes = []
+
+
 def lire_commande_fichier():
     # calcul du chemin de ligne_vocal.txt comme frère de Programmes
     base_dir = os.path.dirname(__file__)
@@ -57,13 +61,13 @@ def lire_commande_fichier():
         return []
 
 
-def parcourir_commande(commande_texte, numero_langue,liste_commandes):
-    structure_commande = {"commande": "", "logiciel": "", "angle_distance": 0, "direction": "", "envoi": "", "vitesse":""}
+def parcourir_commande(commande_texte, numero_langue,historique_commandes):
+    structure_commande = {"commande": "", "logiciel": "", "angle_distance": 0, "direction": "", "envoi": ""}
     fichier_csv = os.path.join(os.path.dirname(__file__), os.pardir, "Casse_Noisette", "liste_commande_vocale.csv")
     #fichier_path = "liste_commande_vocale.csv"
     try:
         with open(fichier_csv, "r", encoding="utf-8") as fichier:
-            reader = csv.reader(fichier, delimiter=';')
+            reader = csv.reader(fichier, delimiter=',')
 
             for mot in commande_texte:
                 print(mot)
@@ -79,12 +83,12 @@ def parcourir_commande(commande_texte, numero_langue,liste_commandes):
                             print("mot détécté")
                             if ligne[1] == "commande":
                                 print("commande detectee")
-                                liste_commandes.append(structure_commande.copy())
+                                historique_commandes.append(structure_commande.copy())
                                 structure_commande = {"commande": ligne[0], "logiciel": "", "angle_distance": 0,
-                                                      "direction": "", "envoi": "", "vitesse": ""}
+                                                      "direction": "", "envoi": ""}
 
-                          #  elif ligne[1] == "logiciel":
-                           #     structure_commande["logiciel"] = ligne[0]
+                            elif ligne[1] == "logiciel":
+                                structure_commande["logiciel"] = ligne[0]
 
                             elif ligne[1] == "direction":
                                 structure_commande["direction"] = ligne[0]
@@ -99,203 +103,126 @@ def parcourir_commande(commande_texte, numero_langue,liste_commandes):
         print("Erreur : fichier ligne_vocal.txt introuvable.")
         return
 
-    liste_commandes.append(structure_commande)
-    return liste_commandes
+    historique_commandes.append(structure_commande)
+    return historique_commandes
 
 
-def executer_mouvement(liste_commandes,historique_commandes):
-    for i in range(1, len(liste_commandes)):
+def executer_mouvement(historique_commandes):
+    for i in range(1, len(historique_commandes)):
         print("traitement")
         print()
-        print(liste_commandes[i])
-        vitesse=(liste_commandes[i]["vitesse"]=='s')
+        print(historique_commandes[i])
+        vitesse=(historique_commandes[i]["vitesse"]=='s')
         #print(vitesse)
-        if liste_commandes[i]["commande"] == 'f':  # avancées ?
+        if historique_commandes[i]["commande"] == 'f':  # avancées ?
 
-            if liste_commandes[i]["direction"] == 'l':  # avance gauche ?
+            if historique_commandes[i]["direction"] == 'l':  # avance gauche ?
                 if vitesse:
-                    liste_commandes[i]["envoi"]='r' #avance gauche rapide
+                    historique_commandes[i]["envoi"]='r' #avance gauche rapide
                 else:
-                    liste_commandes[i]["envoi"] = 'a' #avance gauche
+                    historique_commandes[i]["envoi"] = 'a' #avance gauche
 
-            elif liste_commandes[i]["direction"] == 'r':  # avance droite ?
+            elif historique_commandes[i]["direction"] == 'r':  # avance droite ?
                 if vitesse:
-                    liste_commandes[i]["envoi"]='y' #avance droite rapide
+                    historique_commandes[i]["envoi"]='y' #avance droite rapide
                 else:
-                    liste_commandes[i]["envoi"] = 'e' #avance droite
+                    historique_commandes[i]["envoi"] = 'e' #avance droite
 
             else:                                           #avance normale ?
                 if vitesse:
-                    liste_commandes[i]["envoi"] = 't' # avance normale rapide
+                    historique_commandes[i]["envoi"] = 't' # avance normale rapide
                 else:
-                    liste_commandes[i]["envoi"] = 'z'  # avance normale
+                    historique_commandes[i]["envoi"] = 'z'  # avance normale
 
 
-        elif liste_commandes[i]["commande"] == 'b': # recule
+        elif historique_commandes[i]["commande"] == 'b': # recule
 
-            if liste_commandes[i]["direction"] == 'l': # recule gauche ?
+            if historique_commandes[i]["direction"] == 'l': # recule gauche ?
                 if vitesse:
-                    liste_commandes[i]["envoi"] = 'v' #recule gauche rapide
+                    historique_commandes[i]["envoi"] = 'v' #recule gauche rapide
                 else:
-                    liste_commandes[i]["envoi"] = 'w' # recule gauche
+                    historique_commandes[i]["envoi"] = 'w' # recule gauche
 
-            elif liste_commandes[i]["direction"] == 'r': #recule droite ?
+            elif historique_commandes[i]["direction"] == 'r': #recule droite ?
                 if vitesse:
-                    liste_commandes[i]["envoi"] = 'b' #recule droite rapide
+                    historique_commandes[i]["envoi"] = 'b' #recule droite rapide
                 else:
-                    liste_commandes[i]["envoi"] = 'x' #recule droite
+                    historique_commandes[i]["envoi"] = 'x' #recule droite
 
             else:                                           #recule normale ?
                 if vitesse:
-                    liste_commandes[i]["envoi"] = 'g'    #recule normale rapide
+                    historique_commandes[i]["envoi"] = 'g'    #recule normale rapide
                 else : 
-                    liste_commandes[i]["envoi"] = 's'    #recule normale
+                    historique_commandes[i]["envoi"] = 's'    #recule normale
 
 
-        elif liste_commandes[i]["commande"] == "t":      #tourner
+        elif historique_commandes[i]["commande"] == "t":      #tourner
 
-            if liste_commandes[i]["direction"] == 'l':     #tourner à gauche ?
+            if historique_commandes[i]["direction"] == 'l':     #tourner à gauche ?
                 if vitesse:
-                    liste_commandes[i]["envoi"]='f'       #tourner à gauche rapide
+                    historique_commandes[i]["envoi"]='f'       #tourner à gauche rapide
                 else:
-                    liste_commandes[i]["envoi"] = 'q'      #tourner à gauche normale
+                    historique_commandes[i]["envoi"] = 'q'      #tourner à gauche normale
 
             else:                                               #tourner à droite ?
                 if vitesse:
-                    liste_commandes[i]["envoi"]='h'        #tourner à droite rapide
+                    historique_commandes[i]["envoi"]='h'        #tourner à droite rapide
                 else:
-                    liste_commandes[i]["envoi"] = 'd'      #tourner à droite
+                    historique_commandes[i]["envoi"] = 'd'      #tourner à droite
 
-        elif liste_commandes[i]["commande"] == "c":        #faire demi-tour
+        elif historique_commandes[i]["commande"] == "c":        #faire demi-tour
 
-            if liste_commandes[i]["direction"]=='l':       #faire demi-tour à gauche
+            if historique_commandes[i]["direction"]=='l':       #faire demi-tour à gauche
                 if vitesse:
-                    liste_commandes[i]["envoi"]=='r'       #demi-tour gauche rapide
+                    historique_commandes[i]["envoi"]=='r'       #demi-tour gauche rapide
                 else:
-                    liste_commandes[i]["envoi"]="q"        #demi-tour gauche normal
+                    historique_commandes[i]["envoi"]="q"        #demi-tour gauche normal
 
             else:                                               #faire demi-tour à droite
                 if vitesse:
-                    liste_commandes[i]["envoi"]=='h'       #demi-tour droite rapide
+                    historique_commandes[i]["envoi"]=='h'       #demi-tour droite rapide
                 else : 
-                    liste_commandes[i]["envoi"]="d"        #demi-tour droite normal  
+                    historique_commandes[i]["envoi"]="d"        #demi-tour droite normal     
 
-        elif liste_commandes[i]["commande"]=='a':
-            print("commande précédente : ", historique_commandes[-1])
-            for commande in historique_commandes[-1]:
-                liste_commandes.append(commande)
-
-        elif liste_commandes[i]["commande"]=="e":
-            liste_commandes[i]["envoi"]='l'
 
         else:                                                   #si pas de commmande, on envoie arrêt
-            liste_commandes[i]["envoi"]='m'
+            historique_commandes[i]["envoi"]='m'
 
 
 def executer_logiciel(structure_commande):
     pass
 
-#def enregistrer_trajectoire(liste_commandes,historique_commandes)
 
 
-async def envoi_commandes(liste_commandes, com):
-
-    for i in range(1,len(liste_commandes)):
-        if liste_commandes[i]["commande"]!='e':
-            
-            delai=calculer_temps(liste_commandes[i])
-            envoi=liste_commandes[i]["envoi"]
-            if liste_commandes[i]["commande"]=='z':
-                await envoi_zigzag(liste_commandes[i],com)
-            else:
-                await com.envoie_bluetooth(envoi)
-                print(envoi)
-                print("délai : ",delai)
-                await asyncio.sleep(delai)
-        else:
-            break
+async def envoi_commandes(historique_commandes):
+    com = communication()
+    await com.init_HM10()
+    for i in range(1,len(historique_commandes)):
+        delai=calculer_temps(historique_commandes[i])
+        envoi=historique_commandes[i]["envoi"]
+        await com.envoie_bluetooth(envoi)
+        print(envoi)
+        print("délai : ",delai)
+        await asyncio.sleep(delai)
     await com.envoie_bluetooth('m')
-
-
+        
+        
 def calculer_temps(commande):
-    if commande["commande"]=='f' or commande["commande"]=='b':
-        if commande["angle_distance"]==0:
-            print("durée avancée")
-            return 1
-        else:
-            return commande["angle_distance"]
+    if commande["commande"]=='z' or commande["commande"]=='s':
+        return commande["angle_distance"]/5
     elif commande["commande"]=='t':
-        return 0.5
+        return 0.9
     elif commande["commande"]=='c':
         return 2.3
     else:
         return commande["angle_distance"] #a modifier
 
-async def envoi_zigzag(commande_zigzag,com):
-    nb_zigzag=commande_zigzag["angle_distance"]
-    if nb_zigzag==0:
-        if commande_zigzag["direction"]=='l':
-            await com.envoie_bluetooth('z')
-            await asyncio.sleep(0.7)
-            await com.envoie_bluetooth('q')
-            await asyncio.sleep(0.5)
-            await com.envoie_bluetooth('z')
-            await asyncio.sleep(0.7)
-            await com.envoie_bluetooth('d')
-            await asyncio.sleep(0.5)
-            await com.envoie_bluetooth('z')
-            await asyncio.sleep(0.5)
-        else:
-            await com.envoie_bluetooth('z')
-            await asyncio.sleep(0.7)
-            await com.envoie_bluetooth('d')
-            await asyncio.sleep(0.5)
-            await com.envoie_bluetooth('z')
-            await asyncio.sleep(0.7)
-            await com.envoie_bluetooth('q')
-            await asyncio.sleep(0.5)
-            await com.envoie_bluetooth('z')
-            await asyncio.sleep(0.5)
-    else:
-        for i in range(nb_zigzag):
-            if commande_zigzag["direction"]=='l':
-                await com.envoie_bluetooth('z')
-                await asyncio.sleep(0.7)
-                await com.envoie_bluetooth('q')
-                await asyncio.sleep(0.5)
-                await com.envoie_bluetooth('z')
-                await asyncio.sleep(0.7)
-                await com.envoie_bluetooth('d')
-                await asyncio.sleep(0.5)
-                await com.envoie_bluetooth('z')
-                await asyncio.sleep(0.5)
-            else:
-                await com.envoie_bluetooth('z')
-                await asyncio.sleep(0.7)
-                await com.envoie_bluetooth('d')
-                await asyncio.sleep(0.5)
-                await com.envoie_bluetooth('z')
-                await asyncio.sleep(0.7)
-                await com.envoie_bluetooth('q')
-                await asyncio.sleep(0.5)
-                await com.envoie_bluetooth('z')
-                await asyncio.sleep(0.5)
-#3024
-
-def test_arret(liste_commandes):
-    for commande in liste_commandes:
-        if commande["commande"]=='e':
-            return True
-    return False
-
 
 async def main():
     com = communication()
     await com.init_HM10()
-    liste_commandes=[]
-    historique_commandes=[]
     while True:
-        if keyboard.is_pressed('l') or test_arret(liste_commandes):
+        if keyboard.is_pressed('l'):
             await com.envoie_bluetooth("m")
             break
 
@@ -328,26 +255,23 @@ async def main():
             ligne_vocal = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
             ecrire_commande_fichier(result, ligne_vocal)
             print("Vous avez dit :", result)
-            new_reco = 1
         except Exception:
             print("Problème reconnaissance vocale")
-            new_reco = 0
 
-        if new_reco :
-            liste_commandes=[]
-            structure_commande=parcourir_commande(lire_commande_fichier(), numero, liste_commandes)
-            print(structure_commande)
-            executer_mouvement(liste_commandes,historique_commandes)
-        # envoi=liste_commandes[1]["envoi"]
-            print("liste_commandes : ",liste_commandes)
 
-            #print(envoi)
-            #com = communication()
-            #await com.init_HM10()
-            #await com.envoie_bluetooth('m')
-            await envoi_commandes(liste_commandes, com)
-            historique_commandes.append(liste_commandes)
-        
+        historique_commandes=[]
+        structure_commande=parcourir_commande(lire_commande_fichier(), numero,historique_commandes)
+        print(structure_commande)
+        executer_mouvement(historique_commandes)
+    # envoi=historique_commandes[1]["envoi"]
+        print(historique_commandes)
+
+        #print(envoi)
+        #com = communication()
+        #await com.init_HM10()
+        #await com.envoie_bluetooth('m')
+        #await envoi_commandes(historique_commandes)
+
 
 if __name__ == "__main__":
     asyncio.run(main())
