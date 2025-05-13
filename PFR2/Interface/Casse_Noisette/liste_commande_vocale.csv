@@ -14,6 +14,8 @@ t,commande,tourne,turn
 r,direction,droite,right
 l,direction,gauche,left
 s,vitesse,rapidement,fast
+s,vitesse,rapide,fast
+s,vitesse,vite,fast
 m,commande,arrêt,stop
 e,logiciel,quitte le mode vocal,exit voice mode
 n,logiciel,enregistre le trajectoire,record trajectory

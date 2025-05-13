@@ -1,3 +1,4 @@
+import keyboard
 import asyncio
 from communication_HM10 import communication
 import csv
@@ -61,7 +62,7 @@ def lire_commande_fichier():
 
 
 def parcourir_commande(commande_texte, numero_langue,historique_commandes):
-    structure_commande = {"commande": "", "logiciel": "", "angle_distance": 0, "direction": "", "envoi": "", "vitesse": ""}
+    structure_commande = {"commande": "", "logiciel": "", "angle_distance": 0, "direction": "", "envoi": ""}
     fichier_csv = os.path.join(os.path.dirname(__file__), os.pardir, "Casse_Noisette", "liste_commande_vocale.csv")
     #fichier_path = "liste_commande_vocale.csv"
     try:
@@ -84,7 +85,7 @@ def parcourir_commande(commande_texte, numero_langue,historique_commandes):
                                 print("commande detectee")
                                 historique_commandes.append(structure_commande.copy())
                                 structure_commande = {"commande": ligne[0], "logiciel": "", "angle_distance": 0,
-                                                      "direction": "", "envoi": "", "vitesse": ""}
+                                                      "direction": "", "envoi": ""}
 
                             elif ligne[1] == "logiciel":
                                 structure_commande["logiciel"] = ligne[0]
@@ -206,9 +207,6 @@ async def envoi_commandes(historique_commandes):
     await com.envoie_bluetooth('m')
         
         
-
-
-
 def calculer_temps(commande):
     if commande["commande"]=='z' or commande["commande"]=='s':
         return commande["angle_distance"]/5
@@ -221,49 +219,58 @@ def calculer_temps(commande):
 
 
 async def main():
-    # calcul du chemin de choix_langue.txt comme frère de Programmes
-    base_dir = os.path.dirname(__file__)
-    interface_dir = os.path.abspath(os.path.join(base_dir, os.pardir))
-    chemin = os.path.join(interface_dir, "Casse_Noisette", "choix_langue.txt")
-    #chemin = "choix_langue.txt"
+    com = communication()
+    await com.init_HM10()
+    while True:
+        if keyboard.is_pressed('l'):
+            await com.envoie_bluetooth("m")
+            break
 
-    numero, langue = lire_choix_langue(os.getcwd() + "\\Casse_Noisette\\choix_langue.txt")
-    print(lire_choix_langue(chemin))
-    print(numero)
-    if langue is None:
-        sys.exit(1)
+        # calcul du chemin de choix_langue.txt comme frère de Programmes
+        base_dir = os.path.dirname(__file__)
+        interface_dir = os.path.abspath(os.path.join(base_dir, os.pardir))
+        chemin = os.path.join(interface_dir, "Casse_Noisette", "choix_langue.txt")
+        #chemin = "choix_langue.txt"
 
-    code_langue = obtenir_code_langue(langue)
-    print(f"Langue choisie : {langue} (code : {code_langue})")
+        numero, langue = lire_choix_langue(os.getcwd() + "\\Casse_Noisette\\choix_langue.txt")
+        print(lire_choix_langue(chemin))
+        print(numero)
+        if langue is None:
+            sys.exit(1)
 
-    try:
-        r = sr.Recognizer()
-        micro = sr.Microphone()
-        with micro as source:
-            print("Speak!")
-            audio_data = r.listen(source)
-            print("End!")
+        code_langue = obtenir_code_langue(langue)
+        print(f"Langue choisie : {langue} (code : {code_langue})")
 
-        result = r.recognize_google(audio_data, language=code_langue)
-        # écriture du résultat dans ligne_vocal.txt
-        ligne_vocal = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
-        ecrire_commande_fichier(result, ligne_vocal)
-        print("Vous avez dit :", result)
-    except Exception:
-        print("Problème reconnaissance vocale")
 
-    historique_commandes=[]
-    structure_commande=parcourir_commande(lire_commande_fichier(), numero,historique_commandes)
-    print(structure_commande)
-    executer_mouvement(historique_commandes)
-   # envoi=historique_commandes[1]["envoi"]
-    print(historique_commandes)
-    print()
-    print(historique_commandes[1]["envoi"])
-    #com = communication()
-    #await com.init_HM10()
-    #await com.envoie_bluetooth('m')
-    await envoi_commandes(historique_commandes)
+        try:
+            r = sr.Recognizer()
+            micro = sr.Microphone()
+            with micro as source:
+                print("Speak!")
+                audio_data = r.listen(source)
+                print("End!")
+
+            result = r.recognize_google(audio_data, language=code_langue)
+            # écriture du résultat dans ligne_vocal.txt
+            ligne_vocal = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
+            ecrire_commande_fichier(result, ligne_vocal)
+            print("Vous avez dit :", result)
+        except Exception:
+            print("Problème reconnaissance vocale")
+
+
+        historique_commandes=[]
+        structure_commande=parcourir_commande(lire_commande_fichier(), numero,historique_commandes)
+        print(structure_commande)
+        executer_mouvement(historique_commandes)
+    # envoi=historique_commandes[1]["envoi"]
+        print(historique_commandes)
+
+        #print(envoi)
+        #com = communication()
+        #await com.init_HM10()
+        #await com.envoie_bluetooth('m')
+        #await envoi_commandes(historique_commandes)
 
 
 if __name__ == "__main__":
