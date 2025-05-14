@@ -39,7 +39,7 @@ LOOP_DELAY = 0.02
 
 async def main():
         com = communication()
-        #await com.init_HM10()
+        await com.init_HM10()
         # 3) Init pygame + manette
         pygame.init()
         pygame.joystick.init()
@@ -111,6 +111,7 @@ async def main():
 
                 if (keyboard.is_pressed('l') or btn[0] ==1): # or btn(0)) :
                     pygame.quit()
+                    com.close()
                     break
 
         except (keyboard.is_pressed('l') or btn[0] ==1):
