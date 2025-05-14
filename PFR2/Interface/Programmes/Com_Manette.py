@@ -118,7 +118,7 @@ async def main():
                 await com.envoie_bluetooth(cmd)
                 last_cmd = cmd
 
-            if (btn[0] == 1):  # or btn(0)) :
+            if (keyboard.is_pressed('l') or btn[0] == 1):  # or btn(0)) :
                 pygame.quit()
                 await com.close()
                 break

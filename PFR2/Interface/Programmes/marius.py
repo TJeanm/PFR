@@ -129,24 +129,25 @@ def executer_mouvement(liste_commandes,historique_commandes):
         print("traitement")
         print()
         print(liste_commandes[i])
-        vitesse=(liste_commandes[i]["vitesse"]=='s')
+        #vitesse=(liste_commandes[i]["vitesse"]=='s')
+        #vitesse=vitesse(liste_commandes[i])
         #print(vitesse)
         if liste_commandes[i]["commande"] == 'f':  # avancées ?
 
             if liste_commandes[i]["direction"] == 'l':  # avance gauche ?
-                if vitesse:
+                if vitesse(liste_commandes[i]):
                     liste_commandes[i]["envoi"]='r' #avance gauche rapide
                 else:
                     liste_commandes[i]["envoi"] = 'a' #avance gauche
 
             elif liste_commandes[i]["direction"] == 'r':  # avance droite ?
-                if vitesse:
+                if vitesse(liste_commandes[i]):
                     liste_commandes[i]["envoi"]='y' #avance droite rapide
                 else:
                     liste_commandes[i]["envoi"] = 'e' #avance droite
 
             else:                                           #avance normale ?
-                if vitesse:
+                if vitesse(liste_commandes[i]):
                     liste_commandes[i]["envoi"] = 't' # avance normale rapide
                 else:
                     liste_commandes[i]["envoi"] = 'z'  # avance normale
@@ -155,19 +156,19 @@ def executer_mouvement(liste_commandes,historique_commandes):
         elif liste_commandes[i]["commande"] == 'b': # recule
 
             if liste_commandes[i]["direction"] == 'l': # recule gauche ?
-                if vitesse:
+                if vitesse(liste_commandes[i]):
                     liste_commandes[i]["envoi"] = 'v' #recule gauche rapide
                 else:
                     liste_commandes[i]["envoi"] = 'w' # recule gauche
 
             elif liste_commandes[i]["direction"] == 'r': #recule droite ?
-                if vitesse:
+                if vitesse(liste_commandes[i]):
                     liste_commandes[i]["envoi"] = 'b' #recule droite rapide
                 else:
                     liste_commandes[i]["envoi"] = 'x' #recule droite
 
             else:                                           #recule normale ?
-                if vitesse:
+                if vitesse(liste_commandes[i]):
                     liste_commandes[i]["envoi"] = 'g'    #recule normale rapide
                 else : 
                     liste_commandes[i]["envoi"] = 's'    #recule normale
@@ -176,13 +177,13 @@ def executer_mouvement(liste_commandes,historique_commandes):
         elif liste_commandes[i]["commande"] == "t":      #tourner
 
             if liste_commandes[i]["direction"] == 'l':     #tourner à gauche ?
-                if vitesse:
+                if vitesse(liste_commandes[i]):
                     liste_commandes[i]["envoi"]='f'       #tourner à gauche rapide
                 else:
                     liste_commandes[i]["envoi"] = 'q'      #tourner à gauche normale
 
             else:                                               #tourner à droite ?
-                if vitesse:
+                if vitesse(liste_commandes[i]):
                     liste_commandes[i]["envoi"]='h'        #tourner à droite rapide
                 else:
                     liste_commandes[i]["envoi"] = 'd'      #tourner à droite
@@ -190,13 +191,13 @@ def executer_mouvement(liste_commandes,historique_commandes):
         elif liste_commandes[i]["commande"] == "c":        #faire demi-tour
 
             if liste_commandes[i]["direction"]=='l':       #faire demi-tour à gauche
-                if vitesse:
+                if vitesse(liste_commandes[i]):
                     liste_commandes[i]["envoi"]=='r'       #demi-tour gauche rapide
                 else:
                     liste_commandes[i]["envoi"]="q"        #demi-tour gauche normal
 
             else:                                               #faire demi-tour à droite
-                if vitesse:
+                if vitesse(liste_commandes[i]):
                     liste_commandes[i]["envoi"]=='h'       #demi-tour droite rapide
                 else : 
                     liste_commandes[i]["envoi"]="d"        #demi-tour droite normal  
@@ -249,7 +250,7 @@ def calculer_temps(commande):
 
     if commande["commande"]=='f' or commande["commande"]=='b':
 
-        if commande["vitesse"]!='s':
+        if not vitesse:
 
             if commande["angle_distance"]==0:
                 print("durée avancée")
@@ -267,13 +268,13 @@ def calculer_temps(commande):
                 return commande["angle_distance"]/diviseur*0.8
             
     elif commande["commande"]=='t':
-        if commande["vitesse"]!='s':
+        if not vitesse:
             return 0.5
         else:
             return 0.4
         
     elif commande["commande"]=='c':
-        if commande["vitesse"]!='s':
+        if not vitesse:
             return 2.3
         else:
             return 2

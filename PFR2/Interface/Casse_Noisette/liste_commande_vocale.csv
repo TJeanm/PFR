@@ -13,6 +13,7 @@ t;commande;tourner;
 t;commande;tourne;
 z;commande;zigzag;zigzag
 z;commande;zig;zig
+k;commande;carré;square
 a;commande;encore;again
 r;direction;droite;right
 l;direction;gauche;left
