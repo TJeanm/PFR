@@ -9,7 +9,8 @@ import cv2
 from numpy.fft import fft2, ifft2, fftshift
 import math
 from scipy.signal import correlate2d
-
+import socket
+import pickle
 ROTATION_THRESHOLD = 5  # Seuil de détection de rotation en degrés
 DISTANCE_THRESHOLD = 1.0  # Seuil de distance pour filtrer les points (en mètres)
 ALIGNMENT_SCORE_THRESHOLD = 50  # Seuil pour la fusion des cartes (nombre minimum de points alignés)
@@ -886,6 +887,8 @@ def clean_overlapping_points(grid, kernel_size=3, iterations=1):
     eroded = cv2.erode(grid, kernel, iterations=iterations)
     return eroded
 THRESH = 75
+
+
 try:
     fig, axes = plt.subplots(1, 2, figsize=(12, 6))  # Taille de la figure ajustable
 
@@ -1004,6 +1007,10 @@ try:
 except Exception as e:
     print(f"Erreur dans la connexion au LiDAR : {e}")
  
+except KeyboardInterrupt:
+    print("Interruption par l'utilisateur. Sortie du programme.")
+    break  # Quitter la boucle et terminer proprement
+
 finally:
     print("Fermeture du LiDAR.")
     try:
