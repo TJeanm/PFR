@@ -11,7 +11,7 @@ UTILISATEUR = "👤 Utilisateur"
 ADMINISTRATEUR = "🔧 Administrateur"
 MODE_AUTOMATIQUE = "🤖 Mode automatique"
 MODE_MANUEL = "🎮 Mode manuel"
-MODE_IMAGE = "📷 Mode reconnaissance image"
+MODE_IMAGE = "📷 Reconnaissance image"
 CARTOGRAPHIE = "🗺️ Cartographie"
 SUIVEUR = "🏀 Mode suiveur de balle"
 DETECTION = "🔍 Détection d'objet"
@@ -27,18 +27,18 @@ QUITTER = "❌ Quitter"
 
 # Définition des fichiers
 INITIALISATION_UTILISATEUR = "Programmes\\initialisation_utilisateur.py"
-ACTIVATION_VOCAL = "Programmes\\commande_vocale_v6biturbo.py"
+ACTIVATION_VOCAL = "Programmes\\commande_vocal_interface.py" #commande_vocale_v6biturbo
 ACTIVATION_MANETTE = "Programmes\\Com_Manette.py"
 ACTIVATION_AUTOMATIQUE = "Programmes\\automatique.py"
 ACTIVATION_SUIVIE = "Programmes\\image_suivie.py"
-ACTIVATION_DETECTION = "Programmes\\lancer_camera.py"
+ACTIVATION_DETECTION = "Programmes\\detection_all_simu.py"
 ACTIVATION_CARTOGRAPHIE = "Programmes\\connexion_Raspberry.py"
 
 
 LISTE_COMMANDE_VOCAL = "Casse_Noisette\\liste_commande_vocale.csv"
 LISTE_COMMANDE_VOCAL_LECTURE = "Casse_Noisette/liste_commande_vocale.csv"
 CARTE = "Casse_Noisette/plan_Toulouse.jpeg"
-BIENVENUE = "Casse_Noisette/image_PFR.png"
+BIENVENUE = "Casse_Noisette/image_PFR_4.png"
 FICHIER_MDP = "Casse_Noisette/mdp_admin.txt"
 FICHIER_CPT_ULTRASON = "Casse_Noisette/activation_capteur_ultrason.txt"
 
@@ -93,7 +93,7 @@ class MenuApp:
         self.label.place(x=50, y=50)
 
         self.image_label = tk.Label(self.root, bg="#1e1e1e")
-        self.image_label.place(x=520, y=70)
+        self.image_label.place(x=450, y=70)
 
         self.update_menu()
         self.root.bind("<Up>", self.navigate_up)
@@ -103,7 +103,7 @@ class MenuApp:
     def afficher_image(self, chemin_image):
         try:
             image = Image.open(chemin_image)
-            image = image.resize((350, 350))
+            image = image.resize((int(768/2), int(768/2))) #(350, 350)
             self.photo = ImageTk.PhotoImage(image)
             self.image_label.config(image=self.photo)
             self.image_label.image = self.photo

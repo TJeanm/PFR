@@ -250,7 +250,7 @@ def calculer_temps(commande):
 
     if commande["commande"]=='f' or commande["commande"]=='b':
 
-        if not vitesse:
+        if not vitesse(commande):
 
             if commande["angle_distance"]==0:
                 print("durée avancée")
@@ -268,13 +268,21 @@ def calculer_temps(commande):
                 return commande["angle_distance"]/diviseur*0.8
             
     elif commande["commande"]=='t':
-        if not vitesse:
-            return 0.5
+        if not vitesse(commande):
+            if commande["angle_distance"]==0:
+                return 0.25
+            else:
+                res = 0.007*commande["angle_distance"]
+                print("AAAAAAAAAAA : ", res)
+                return res
         else:
-            return 0.4
+            if commande["angle_distance"]==0:
+                return 0.32
+            else:
+                return 0.005*commande["angle_distance"]
         
     elif commande["commande"]=='c':
-        if not vitesse:
+        if not vitesse(commande):
             return 2.3
         else:
             return 2
