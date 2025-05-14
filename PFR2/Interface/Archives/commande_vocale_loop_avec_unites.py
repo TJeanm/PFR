@@ -298,11 +298,14 @@ def test_arret(liste_commandes):
 async def main():
     com = communication()
     await com.init_HM10()
+    await com.envoie_bluetooth("i")
     liste_commandes=[]
     historique_commandes=[]
     while True:
         if keyboard.is_pressed('l') or test_arret(liste_commandes):
+            await com.envoie_bluetooth("p")
             await com.envoie_bluetooth("m")
+            await com.close()
             break
 
         # calcul du chemin de choix_langue.txt comme frère de Programmes

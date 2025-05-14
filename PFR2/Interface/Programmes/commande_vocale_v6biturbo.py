@@ -37,8 +37,9 @@ def ecrire_commande_fichier(commande, fich):
     with open(fich, "w", encoding="utf-8") as fichier:
         fichier.write(commande + "\n")
 
-def recuperer_audio():
+def recuperer_audio(code_langue):
     try:
+        print("recupération de l'audio")
         r = sr.Recognizer()
         micro = sr.Microphone()
         with micro as source:
@@ -48,13 +49,14 @@ def recuperer_audio():
 
         result = r.recognize_google(audio_data, language=code_langue)
         # écriture du résultat dans ligne_vocal.txt
-        ligne_vocal = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
-        ecrire_commande_fichier(result, ligne_vocal)
+        #ligne_vocal = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
+        #ecrire_commande_fichier(result, ligne_vocal)
+        phrase=result.split()
         print("Vous avez dit :", result)
-        return 1
+        return 1,phrase
     except Exception:
         print("Problème reconnaissance vocale")
-        return 0
+        return 0,None
 
 
 def lire_commande_fichier():
@@ -238,21 +240,42 @@ async def envoi_commandes(liste_commandes, com):
 
 def calculer_temps(commande):
     diviseur=1
-    print("unité délai : ", commande["unité"])
+    #print("unité délai : ", commande["unité"])
     if commande["unité"]=='cm':
         diviseur=100
         print("diviseur cm : ",diviseur)
+
     if commande["commande"]=='f' or commande["commande"]=='b':
-        if commande["angle_distance"]==0:
-            print("durée avancée")
-            print("durée : ",1/diviseur)
-            return 1
+
+        if commande["vitesse"]!='s':
+
+            if commande["angle_distance"]==0:
+                print("durée avancée")
+                print("durée : ",1/diviseur)
+                return 1
+            else:
+                return commande["angle_distance"]/diviseur
+            
         else:
-            return commande["angle_distance"]/diviseur
+            if commande["angle_distance"]==0:
+                print("durée avancée")
+                print("durée : ",1/diviseur*0.8)
+                return 1
+            else:
+                return commande["angle_distance"]/diviseur*0.8
+            
     elif commande["commande"]=='t':
-        return 0.5
+        if commande["vitesse"]!='s':
+            return 0.5
+        else:
+            return 0.4
+        
     elif commande["commande"]=='c':
-        return 2.3
+        if commande["vitesse"]!='s':
+            return 2.3
+        else:
+            return 2
+    
     else:
         return commande["angle_distance"] #a modifier
 
@@ -317,33 +340,37 @@ def test_arret(liste_commandes):
 async def main():
     com = communication()
     await com.init_HM10()
+    await com.envoie_bluetooth("i")
     liste_commandes=[]
     historique_commandes=[]
     while True:
         if keyboard.is_pressed('l') or test_arret(liste_commandes):
+            await com.envoie_bluetooth("p")
             await com.envoie_bluetooth("m")
+            await com.close()
             break
 
         # calcul du chemin de choix_langue.txt comme frère de Programmes
-        base_dir = os.path.dirname(__file__)
-        interface_dir = os.path.abspath(os.path.join(base_dir, os.pardir))
-        chemin = os.path.join(interface_dir, "Casse_Noisette", "choix_langue.txt")
+        #base_dir = os.path.dirname(__file__)
+        #interface_dir = os.path.abspath(os.path.join(base_dir, os.pardir))
+        #chemin = os.path.join(interface_dir, "Casse_Noisette", "choix_langue.txt")
         #chemin = "choix_langue.txt"
 
-        numero, langue = lire_choix_langue(os.getcwd() + "\\Casse_Noisette\\choix_langue.txt")
-        print(lire_choix_langue(chemin))
-        print(numero)
+        numero_langue, langue = lire_choix_langue(os.getcwd() + "\\Casse_Noisette\\choix_langue.txt")
+        #print(lire_choix_langue(chemin))
+        #print(numero)
+
         if langue is None:
             sys.exit(1)
 
         code_langue = obtenir_code_langue(langue)
-        print(f"Langue choisie : {langue} (code : {code_langue})")
+        print("Langue choisie : ", langue, ". Numéro : ", numero_langue, ". Code langue : ", code_langue, ".")
 
-        new_reco=recuperer_audio()
+        new_reco,contenu_audio=recuperer_audio(code_langue)
 
         if new_reco :
             liste_commandes=[]
-            structure_commande=parcourir_commande(lire_commande_fichier(), numero, liste_commandes)
+            structure_commande=parcourir_commande(contenu_audio, numero_langue, liste_commandes)
             print(structure_commande)
             executer_mouvement(liste_commandes,historique_commandes)
             print("liste_commandes : ",liste_commandes)

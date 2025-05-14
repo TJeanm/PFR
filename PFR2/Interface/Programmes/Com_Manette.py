@@ -36,11 +36,17 @@ MODE_VOC = "i"
 DEADZONE = 0.2
 # délai de boucle ramené à 20 ms
 LOOP_DELAY = 0.02
-
+#Fichier activation capteur_ultrason
+FICHIER_MDP = "Casse_Noisette/activation_capteur_ultrason.txt"
 
 async def main():
     com = communication()
     await com.init_HM10()
+    with open(FICHIER_MDP, "r") as f:
+        activation_ultrason = f.read().strip()
+    MODE_MANUEL = activation_ultrason
+    await com.envoie_bluetooth(MODE_MANUEL)
+
     # 3) Init pygame + manette
     pygame.init()
     pygame.joystick.init()

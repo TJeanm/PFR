@@ -18,7 +18,8 @@ DETECTION = "🔍 Détection d'objet"
 CHANGER_LANGUE = "🌐 Changer la langue"
 AJOUTER_LANGUE = "➕ Ajouter une langue"
 CHANGER_MDP = "🔒 Changer le mot de passe"
-ULTRASON = "🔊 Activer/Désactiver les ultrasons"
+ULTRASON_ACTIVE = "🔊 Activer les ultrasons"
+ULTRASON_DESACTIVE = "🔊 Désactiver les ultrasons"
 AVEC_MANETTE = "🕹️ Avec la manette"
 AVEC_VOIX = "🎤 Avec la voix"
 RETOUR = "🔙 Retour"
@@ -26,12 +27,12 @@ QUITTER = "❌ Quitter"
 
 # Définition des fichiers
 INITIALISATION_UTILISATEUR = "Programmes\\initialisation_utilisateur.py"
-ACTIVATION_VOCAL = "Programmes\\commande_vocale_loop_avec_unites.py"
+ACTIVATION_VOCAL = "Programmes\\commande_vocale_v6biturbo.py"
 ACTIVATION_MANETTE = "Programmes\\Com_Manette.py"
 ACTIVATION_AUTOMATIQUE = "Programmes\\automatique.py"
 ACTIVATION_SUIVIE = "Programmes\\image_suivie.py"
 ACTIVATION_DETECTION = "Programmes\\detection_all_simu.py"
-ACTIVATION_CARTOGRAPHIE = "Programmes\\lidar.py"
+ACTIVATION_CARTOGRAPHIE = "Programmes\\connexion_Raspberry.py"
 
 
 LISTE_COMMANDE_VOCAL = "Casse_Noisette\\liste_commande_vocale.csv"
@@ -39,6 +40,7 @@ LISTE_COMMANDE_VOCAL_LECTURE = "Casse_Noisette/liste_commande_vocale.csv"
 CARTE = "Casse_Noisette/plan_Toulouse.jpeg"
 BIENVENUE = "Casse_Noisette/image_PFR.png"
 FICHIER_MDP = "Casse_Noisette/mdp_admin.txt"
+FICHIER_CPT_ULTRASON = "Casse_Noisette/activation_capteur_ultrason.txt"
 
 # Fonction pour lire le mot de passe enregistré
 def lire_mot_de_passe():
@@ -82,7 +84,7 @@ class MenuApp:
         self.user_menu = [MODE_AUTOMATIQUE, MODE_MANUEL, MODE_IMAGE, CARTOGRAPHIE, CHANGER_LANGUE, RETOUR, QUITTER]
         self.manuel_menu = [AVEC_MANETTE, AVEC_VOIX, RETOUR, QUITTER]
         self.image_menu = [SUIVEUR, DETECTION, RETOUR, QUITTER]
-        self.admin_menu = [CHANGER_MDP, AJOUTER_LANGUE, RETOUR, QUITTER]
+        self.admin_menu = [CHANGER_MDP, AJOUTER_LANGUE, ULTRASON_ACTIVE, ULTRASON_DESACTIVE, RETOUR, QUITTER]
 
         self.current_menu = self.main_menu
         self.selected_index = 0
@@ -147,7 +149,7 @@ class MenuApp:
             self.update_menu()
             return  # Ne pas exécuter le reste
 
-
+        ### Menu Principal
         if choice == UTILISATEUR:
             self.current_menu = self.user_menu
         elif choice == ADMINISTRATEUR:
@@ -171,7 +173,7 @@ class MenuApp:
             print("Réalisation de la cartographie")
             subprocess.run(["python", ACTIVATION_CARTOGRAPHIE])
 
-        # ### Gestion de la sélection d'une option MANUEL ###
+        ### Gestion de la sélection d'une option MANUEL ###
         elif choice == AVEC_MANETTE:
             print("Contrôle avec la manette activé")
             subprocess.run(["python", ACTIVATION_MANETTE])
@@ -179,18 +181,24 @@ class MenuApp:
             print("Contrôle avec la voix activé")
             subprocess.run(["python", ACTIVATION_VOCAL])
 
-        # ### Gestion de la sélection d'une option IMAGE ###
+        ### Gestion de la sélection d'une option IMAGE ###
         elif choice == SUIVEUR:
             subprocess.run(["python", ACTIVATION_SUIVIE])
         elif choice == DETECTION:
             subprocess.run(["python", ACTIVATION_DETECTION])
 
-        # ### Gestion de la sélection d'une option ADMINISTRATEUR ###
+        ### Gestion de la sélection d'une option ADMINISTRATEUR ###
         elif choice == CHANGER_MDP:
             self.changer_mot_de_passe()
         elif choice == AJOUTER_LANGUE:
             self.afficher_aide_ajout_langue()
             return
+        elif choice == ULTRASON_ACTIVE:
+            with open(FICHIER_CPT_ULTRASON, "w") as f:
+                f.write("i")
+        elif choice == ULTRASON_DESACTIVE:
+            with open(FICHIER_CPT_ULTRASON, "w") as f:
+                f.write("p")
         elif choice == RETOUR:
             if self.current_menu in [self.user_menu, self.admin_menu]:
                 self.current_menu = self.main_menu
@@ -235,8 +243,10 @@ class MenuApp:
         self.image_label.place_forget()
         self.help_label.config(text=(
             "- Ce fichier CSV contient les commandes vocales disponibles.\n"
-            "- Vous pouvez l’éditer avec Excel ou un éditeur de texte.\n"
-            "- Pour ajouter une langue, insérez une nouvelle colonne avec la langue souhaitée.\n\n"
+            "- Vous pouvez l’éditer avec Excel, Libre Office ou un éditeur de texte.\n"
+            "- Pour ajouter une langue, insérez une nouvelle colonne avec la langue souhaitée.\n"
+            "- Il ne faut mettre chaque commande qu'une seule fois! Si vous le voulez rajouté des conjugaisons\n\n"
+
             "💾 N’oubliez pas d’enregistrer avant de fermer le fichier !!!"
         ))
         self.help_frame.pack(pady=30)

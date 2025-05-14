@@ -31,7 +31,7 @@ def lire_position():
                     x = int(row["X"])
                     y = int(row["Y"])
                     return x, y
-        print("Aucun cercle rose trouvé.")
+        print("Aucun cercle rose trouve.")
         return 0, 0
     except Exception as e:
         print(f"Erreur de lecture : {e}")
@@ -57,6 +57,7 @@ async def main():
     while True:
         if keyboard.is_pressed('l'):
             #await com.envoie_bluetooth("m")
+            #await com.close()
             break
         
         new_temp = time.time()
