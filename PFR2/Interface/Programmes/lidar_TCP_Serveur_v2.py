@@ -8,9 +8,11 @@ from scipy.spatial import KDTree
 import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind(('0.0.0.0', 9999))
-sock.settimeout(5.0)  # max 5 sec d’attente
+
+def get_local_ip():
+    hostname = socket.gethostname()  # Récupère le nom de l'hôte de la machine
+    local_ip = socket.gethostbyname(hostname)  # Récupère l'IP associée au nom d'hôte
+    return local_ip
 
 def add_to_map(grid, points, resolution, center):
     for x, y in points:
@@ -190,17 +192,16 @@ black_cmap = ListedColormap(['white', 'black'])
 green_cmap = ListedColormap(['white', 'green'])
 blue_cmap = ListedColormap(['white', 'blue'])
 
-IP_PC = '192.168.164.207'  # L'adresse IP de ton PC
-PORT = 9999  # Le port à utiliser
+IP_PC = get_local_ip()  # L'adresse IP de ton PC
+PORT = 9998  # Le port à utiliser
 
-MAX_TCP_SIZE = 65507  # Taille maximale pour un paquet TCP
+MAX_TCP_SIZE = 65507  
 
 # Créer un socket TCP
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-# Lier le socket à l'adresse IP et au port
 sock.bind((IP_PC, PORT))
-sock.listen(1)  # Écouter les connexions entrantes
+sock.listen(1)  
 
 print("Serveur en attente de connexion...")
 
@@ -214,21 +215,17 @@ fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 5))
 # Boucle pour recevoir les scans
 try:
     while True:
-        # Lire d'abord la taille (4 octets)
+        
         raw_size = recv_all(client_socket, 4)
         msg_size = int.from_bytes(raw_size, byteorder='big')
 
-        # Lire exactement msg_size octets ensuite
+
         data = recv_all(client_socket, msg_size)
         scan = pickle.loads(data)
         print("scan got")
-        # Assurez-vous que scan est valide
+        
         if scan:
             print("Scan reçu avec", len(scan), "points")
-            
-            # Traitement des données (ex. conversion en coordonnées cartesiennes, etc.)
-            # ... (à adapter selon ton code existant)
-            # Traiter les scans comme dans ton code original...
             print("Scan reçu avec", len(scan), "points")
 
             pts = polar_to_cartesian(scan)
@@ -238,23 +235,22 @@ try:
             if (len(pts)<100):
                 continue
             if not started and len(pts)>100:
-                # 1er scan → initialisation de grid_main
+                
                 add_to_map(grid_main, pts, MAP_RESOLUTION, center)
                 pts = center_points_in_grid(pts, grid_main.shape, MAP_RESOLUTION)
 
                 add_to_map(grid_main, pts, MAP_RESOLUTION, center)
                 main_pts = pts
-
-                ref_grid = build_grid_from_points(pts, grid_main.shape)
                 pts_ref = pts
+                ref_grid = build_grid_from_points(pts, grid_main.shape)
 
                 started = True
                 continue
             pts = center_points_in_grid(pts, grid_main.shape, MAP_RESOLUTION)
 
-            # 6. Re-construire la grille alignée
+
             aligned_grid = build_grid_from_points(pts, grid_main.shape)
-            # chercher la meilleure rotation
+            
             
             initial_guess = [0, 0, 0]  # angle, tx, ty
 
@@ -297,7 +293,7 @@ try:
             ax1.set_ylim(center_y - zoom_size, center_y + zoom_size)
             ax1.axis("off")
 
-            # Afficher la carte alignée
+
             ax2.set_title("Current Scan")
             ax2.imshow(aligned_grid, cmap=blue_cmap, origin='lower', interpolation='nearest')
             ax2.set_xlim(center_x - zoom_size, center_x + zoom_size)
@@ -305,7 +301,7 @@ try:
             ax2.axis("off")
 
             plt.tight_layout()
-            plt.pause(0.01)  # Très important pour rafraîchir l'affichage
+            plt.pause(0.01)  
 
 except Exception as e:
     print("Erreur de réception des données:", e)

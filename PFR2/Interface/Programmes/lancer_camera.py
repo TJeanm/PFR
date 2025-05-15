@@ -9,7 +9,7 @@ def get_local_ip():
     return local_ip
 
 def execute_ssh_command(command):
-    raspberry_ip = "192.168.164.181"
+    raspberry_ip = "192.168.94.181"
     username = "groupe5"
     password = "1234"
 

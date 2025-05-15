@@ -1,9 +1,17 @@
 import socket
 import pickle
 from rplidar import RPLidar
+import sys
 
-IP_PC = '192.168.164.151'  # L'adresse IP de l'ordinateur
-PORT = 9999  # Le même port que sur le serveur
+
+if len(sys.argv) > 1:
+    print("IP ordinateur: ", sys.argv[1])
+else: 
+    print("Aucune adresse IP n'est fourni.")
+    sys.exit(1)
+
+IP_PC = sys.argv[1]  # L'adresse IP de l'ordinateur
+PORT = 9998  # Le même port que sur le serveur
 
 MAX_TCP_SIZE = 65507  # Taille maximale pour un paquet TCP
 

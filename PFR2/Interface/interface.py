@@ -31,7 +31,7 @@ ACTIVATION_VOCAL = "Programmes\\commande_vocal_interface.py" #commande_vocale_v6
 ACTIVATION_MANETTE = "Programmes\\Com_Manette.py"
 ACTIVATION_AUTOMATIQUE = "Programmes\\automatique.py"
 ACTIVATION_SUIVIE = "Programmes\\image_suivie.py"
-ACTIVATION_DETECTION = "Programmes\\detection_all_simu.py"
+ACTIVATION_DETECTION = "Programmes\\lancer_camera.py"
 ACTIVATION_CARTOGRAPHIE = "Programmes\\connexion_Raspberry.py"
 
 
