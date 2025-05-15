@@ -28,7 +28,7 @@ def execute_ssh_command(command):
         pass
 
 # 2. Ensuite, lancer la commande SSH (pendant que les données arrivent)
-lidar_command = f"python3 /home/groupe5/lidar/TCP_client.py {get_local_ip()}"
+lidar_command = f"python3 /home/groupe5/lidar/TCP_lidar2.py {get_local_ip()}"
 execute_ssh_command(lidar_command)
 
 # Lancer un script Python

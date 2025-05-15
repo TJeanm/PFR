@@ -1,1 +1,1 @@
-Casse_Noisette/photo_test/2_balle_jaune_bleu_rose.jpg
+Casse_Noisette/photo_simu_suivie_reel/2_gauche.jpg

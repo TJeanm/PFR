@@ -15,6 +15,7 @@ MODE_IMAGE = "📷 Reconnaissance image"
 CARTOGRAPHIE = "🗺️ Cartographie"
 SUIVEUR = "🏀 Mode suiveur de balle"
 DETECTION = "🔍 Détection d'objet"
+CAMERA = "🎬 Lancement de la camera"
 CHANGER_LANGUE = "🌐 Changer la langue"
 AJOUTER_LANGUE = "➕ Ajouter une langue"
 CHANGER_MDP = "🔒 Changer le mot de passe"
@@ -27,11 +28,12 @@ QUITTER = "❌ Quitter"
 
 # Définition des fichiers
 INITIALISATION_UTILISATEUR = "Programmes\\initialisation_utilisateur.py"
-ACTIVATION_VOCAL = "Programmes\\commande_vocal_interface.py" #commande_vocale_v6biturbo
+ACTIVATION_VOCAL = "Programmes\\commande_vocale_v6biturbo.py" #commande_vocale_v6biturbo commande_vocal_interface
 ACTIVATION_MANETTE = "Programmes\\Com_Manette.py"
 ACTIVATION_AUTOMATIQUE = "Programmes\\automatique.py"
 ACTIVATION_SUIVIE = "Programmes\\image_suivie.py"
-ACTIVATION_DETECTION = "Programmes\\lancer_camera.py"
+ACTIVATION_DETECTION = "Programmes\\detection_all_simu.py"
+ACTIVATION_CAMERA = "Programmes\\lancer_camera.py"
 ACTIVATION_CARTOGRAPHIE = "Programmes\\connexion_Raspberry.py"
 
 
@@ -83,7 +85,7 @@ class MenuApp:
         self.main_menu = [UTILISATEUR, ADMINISTRATEUR, QUITTER]
         self.user_menu = [MODE_AUTOMATIQUE, MODE_MANUEL, MODE_IMAGE, CARTOGRAPHIE, CHANGER_LANGUE, RETOUR, QUITTER]
         self.manuel_menu = [AVEC_MANETTE, AVEC_VOIX, RETOUR, QUITTER]
-        self.image_menu = [SUIVEUR, DETECTION, RETOUR, QUITTER]
+        self.image_menu = [SUIVEUR, DETECTION, CAMERA, RETOUR, QUITTER]
         self.admin_menu = [CHANGER_MDP, AJOUTER_LANGUE, ULTRASON_ACTIVE, ULTRASON_DESACTIVE, RETOUR, QUITTER]
 
         self.current_menu = self.main_menu
@@ -186,6 +188,8 @@ class MenuApp:
             subprocess.run(["python", ACTIVATION_SUIVIE])
         elif choice == DETECTION:
             subprocess.run(["python", ACTIVATION_DETECTION])
+        elif choice == CAMERA:
+            subprocess.run(["python", ACTIVATION_CAMERA]) 
 
         ### Gestion de la sélection d'une option ADMINISTRATEUR ###
         elif choice == CHANGER_MDP:
