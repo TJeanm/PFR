@@ -9,8 +9,8 @@ import pyaudio
 from gtts import gTTS
 
 
-def lire_choix_langue(fichier_choix):
-    try:
+def lire_choix_langue(fichier_choix): #récupère la langue
+    try:    #tentative d'ouverture du fichier
         with open(fichier_choix, "r", encoding="utf-8") as fichier:
             contenu = fichier.read()
             lignes = contenu.splitlines()
@@ -20,117 +20,80 @@ def lire_choix_langue(fichier_choix):
             else:
                 print("Fichier de choix langue incomplet.")
                 return lignes[0], lignes[1]
-    except FileNotFoundError:
+    except FileNotFoundError: #si l'ouverture du fichier est impossible
         print(f"Fichier introuvable : {fichier_choix}")
         return None, None
 
 
-def obtenir_code_langue(nom_langue):
+def obtenir_code_langue(nom_langue): #récupère le code de la langue, utile pour la reconnaissance vocale
     if not nom_langue or len(nom_langue) < 2:
         raise ValueError(f"Nom de langue invalide : {nom_langue!r}")
     prefixe = nom_langue[:2].lower()
     return f"{prefixe}-{prefixe.upper()}"
 
-
-def ecrire_commande_fichier(commande, fich):
-    print(commande)
-    with open(fich, "w", encoding="utf-8") as fichier:
-        fichier.write(commande + "\n")
-
-def recuperer_audio(code_langue):
-    try:
-        print("recupération de l'audio")
+def recuperer_audio(code_langue): #transforme les paroles de l'utilisateur en liste
+    try:    #tentative d'écoute
         r = sr.Recognizer()
         micro = sr.Microphone()
         with micro as source:
             print("Speak!")
-            audio_data = r.listen(source)
+            audio_data = r.listen(source) #écoute
             print("End!")
 
-        result = r.recognize_google(audio_data, language=code_langue)
-        # écriture du résultat dans ligne_vocal.txt
-        #ligne_vocal = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
-        #ecrire_commande_fichier(result, ligne_vocal)
-        phrase=result.split()
-        print("Vous avez dit :", result)
+        result = r.recognize_google(audio_data, language=code_langue) #analyse et transformation en phrase
+        phrase=result.split()   #transformation de la phrase en liste
+        print("Vous avez dit :", result) #affichage de la phrase de l'utilisateur
         return 1,phrase
     except Exception:
         print("Problème reconnaissance vocale")
         return 0,None
 
 
-def lire_commande_fichier():
-    # calcul du chemin de ligne_vocal.txt comme frère de Programmes
-    base_dir = os.path.dirname(__file__)
-    interface_dir = os.path.abspath(os.path.join(base_dir, os.pardir))
-    fichier_path = os.path.join(interface_dir, "Casse_Noisette", "ligne_vocal.txt")
-    # fichier_path="ligne_vocal.txt"
-    try:
-        with open(fichier_path, "r", encoding="utf-8") as fichier:
-            print("Le fichier a bien été ouvert.")
-            lignes = fichier.read().split()
-            if not lignes:
-                print("Le fichier de commande est vide.")
-                return []
-            return lignes
-    except FileNotFoundError:
-        print(f"Erreur : fichier {fichier_path} introuvable.")
-        return []
+def parcourir_commande(commande_texte, numero_langue,liste_commandes):      #premier traitement, remplissage du dictionnaire
 
-
-def parcourir_commande(commande_texte, numero_langue,liste_commandes):
-    structure_commande = {"commande": "", "logiciel": "", "angle_distance": 0, "direction": "", "envoi": "", "vitesse":"", "unité":""}
+    structure_commande = {"commande": "", "distance": 0, "direction": "", "envoi": "", "vitesse":"", "unité":""}  #création d'un dictionnaire avec toutes les infos nécessaires pour chaque commande
     fichier_csv = os.path.join(os.path.dirname(__file__), os.pardir, "Casse_Noisette", "liste_commande_vocale.csv")
     #fichier_path = "liste_commande_vocale.csv"
-    try:
+    try: #tentative d'ouverture du fichier csv
         with open(fichier_csv, "r", encoding="utf-8") as fichier:
             reader = csv.reader(fichier, delimiter=';')
 
-            for mot in commande_texte:
-                print(mot)
-                # on teste si le mot est un nombre
-                if mot.isdigit():
-                    print("nombre détécté")
-                    structure_commande["angle_distance"] = int(mot)
+            for mot in commande_texte:      #on parcourt chaque mot de la commande
+                if mot.isdigit():# on teste si le mot est un nombre
+                    structure_commande["distance"] = int(mot) #on ajoute la donnée dans le dictionnaire
                 else:
                     fichier.seek(0)  # on remet le curseur de lecture au début du fichier
-                    # on teste si le mot est une commande
-                    for ligne in reader:
-                        if ligne[int(numero_langue) + 1] == mot:
-                            print("mot détécté")
-                            if ligne[1] == "commande":
-                                print("commande detectee")
-                                liste_commandes.append(structure_commande.copy())
-                                structure_commande = {"commande": ligne[0], "logiciel": "", "angle_distance": 0,
-                                                      "direction": "", "envoi": "", "vitesse": "", "unité": ""}
 
-                          #  elif ligne[1] == "logiciel":
-                           #     structure_commande["logiciel"] = ligne[0]
+                    for ligne in reader: # on traite maintenant les mots
+                        if ligne[int(numero_langue) + 1] == mot: #on parcourt la colonne du fichier csv qui correspond à la bonne langue
+                            if ligne[1] == "commande": # on teste si le mot est une commande (ex : avant)
+                                liste_commandes.append(structure_commande.copy()) #on passe à une nouvelle commande, donc on ajoute la précédente à la liste de commandes
+                                structure_commande = {"commande": ligne[0], "distance": 0, "direction": "", "envoi": "", "vitesse": "", "unité": ""}
+                                #on initialise un nouveau dictionnaire et on remplit la clé "commande"
+                            elif ligne[1] == "direction": #on teste si le mot est une direction (ex : droite)
+                                structure_commande["direction"] = ligne[0] #on remplit la clé "direction" du dictionnaire
 
-                            elif ligne[1] == "direction":
-                                structure_commande["direction"] = ligne[0]
+                            elif ligne[1] == "vitesse":  # on teste si le mot est un mot relatif à la vitesse (ex: rapidement)
+                                structure_commande["vitesse"] = ligne[0] #on remplit la clé "vitesse" du dictionnaire
 
-                            elif ligne[1] == "vitesse":
-                                structure_commande["vitesse"] = ligne[0]
+                            elif ligne[1] == "unité": # on teste si le mot est une unité (ex: cm)
+                                structure_commande["unité"] = ligne[0]  #on remplit la clé "unité" du dictionnaire
 
-                            elif ligne[1] == "unité":
-                                structure_commande["unité"] = ligne[0]
-
-    except FileNotFoundError:
+    except FileNotFoundError: # échec de l'ouverture du fichier csv
         print("Erreur : fichier ligne_vocal.txt introuvable.")
         return
 
-    liste_commandes.append(structure_commande)
-    return liste_commandes
+    liste_commandes.append(structure_commande) #on ajoute le dernier dictionnaire rempli à la liste de commandes
+    return liste_commandes  #on renvoie la liste des commandes
 
 
-def executer_mouvement(liste_commandes,historique_commandes):
-    for i in range(1, len(liste_commandes)):
-        print("traitement")
-        print()
-        print(liste_commandes[i])
-        vitesse=(liste_commandes[i]["vitesse"]=='s')
-        #print(vitesse)
+def executer_mouvement(liste_commandes,historique_commandes): #suite du traitement, à partir des dictionnaires remplis précédemment
+
+    for i in range(1, len(liste_commandes)): #on parcourt tous les dictionnaires
+
+        vitesse=(liste_commandes[i]["vitesse"]=='s') #boolean qui se répétait
+
+        #on traite tous les cas possibles et on met le bon caractère d'envoi dans le dictionnaire
         if liste_commandes[i]["commande"] == 'f':  # avancées ?
 
             if liste_commandes[i]["direction"] == 'l':  # avance gauche ?
@@ -201,104 +164,95 @@ def executer_mouvement(liste_commandes,historique_commandes):
                 else : 
                     liste_commandes[i]["envoi"]="d"        #demi-tour droite normal  
 
-        elif liste_commandes[i]["commande"]=='a':
-            print("commande précédente : ", historique_commandes[-1])
-            for commande in historique_commandes[-1]:
+        elif liste_commandes[i]["commande"]=='a':           # commande "encore"
+            for commande in historique_commandes[-1]:       #on ajoute la (ou les) commande précédente à la liste 
                 liste_commandes.append(commande)
 
-        elif liste_commandes[i]["commande"]=="e":
+        elif liste_commandes[i]["commande"]=="e":           #on traite l'arrêt du programme
             liste_commandes[i]["envoi"]='l'
 
         else:                                                   #si pas de commmande, on envoie arrêt
             liste_commandes[i]["envoi"]='m'
 
 
-def executer_logiciel(structure_commande):
-    pass
+async def envoi_commandes(liste_commandes, com):    #fonction d'envoi de la commande
 
-#def enregistrer_trajectoire(liste_commandes,historique_commandes)
-
-
-async def envoi_commandes(liste_commandes, com):
-
-    for i in range(1,len(liste_commandes)):
-        if liste_commandes[i]["commande"]!='e':
+    for i in range(1,len(liste_commandes)):     #on parcourt toutes les commandes
+        if liste_commandes[i]["commande"]!='e':     #si ce n'est pas une commande d'arrêt
             
-            delai=calculer_temps(liste_commandes[i])
-            envoi=liste_commandes[i]["envoi"]
-            if liste_commandes[i]["commande"]=='z':
+            delai=calculer_temps(liste_commandes[i])      #on calcule les délais pour les distances
+            envoi=liste_commandes[i]["envoi"]             #on déclare la variable d'envoi
+            if liste_commandes[i]["commande"]=='z':       #cas spéciaux
                 await envoi_zigzag(liste_commandes[i],com)
             elif liste_commandes[i]["commande"]=='k':
                 await envoi_carre(liste_commandes[i],com)
-            else:
-                await com.envoie_bluetooth(envoi)
-                print(envoi)
-                print("délai : ",delai)
-                await asyncio.sleep(delai)
+            else:                                         #si pas de cas spécial
+                await com.envoie_bluetooth(envoi)         #envoi de la commande 
+                await asyncio.sleep(delai)                #en cas de délai
         else:
             break
-    await com.envoie_bluetooth('m')
+    await com.envoie_bluetooth('m')                       #on envoie arrêt à la fin des commandes
 
 
-def calculer_temps(commande):
-    diviseur=1
-    #print("unité délai : ", commande["unité"])
+def calculer_temps(commande): #fonction qui calcule les délais pour les distances
+    diviseur=1                #diviseur pour gérer les unités
     if commande["unité"]=='cm':
         diviseur=100
         print("diviseur cm : ",diviseur)
 
-    if commande["commande"]=='f' or commande["commande"]=='b':
+    if commande["commande"]=='f' or commande["commande"]=='b':      #délais avancer/reculer
 
-        if commande["vitesse"]!='s':
+        if not vitesse(commande):                                #si pas rapidement
 
-            if commande["angle_distance"]==0:
+            if commande["distance"]==0:                                 #si pas de distance
                 print("durée avancée")
                 print("durée : ",1/diviseur)
                 return 1
-            else:
-                return commande["angle_distance"]/diviseur
+            else:                                                       #si distance
+                return commande["distance"]/diviseur
             
-        else:
-            if commande["angle_distance"]==0:
+        else:                                                       #si rapidement
+            if commande["distance"]==0:
                 print("durée avancée")
                 print("durée : ",1/diviseur*0.8)
                 return 1
             else:
-                return commande["angle_distance"]/diviseur*0.8
+                return commande["distance"]/diviseur*0.8
             
-    elif commande["commande"]=='t':
-        if commande["vitesse"]!='s':
+    elif commande["commande"]=='t':                                 #délais tourner
+        if not vitesse(commande):
             return 0.5
         else:
             return 0.4
         
     elif commande["commande"]=='c':
-        if commande["vitesse"]!='s':
+        if not vitesse(commande):
             return 2.3
         else:
             return 2
     
     else:
-        return commande["angle_distance"] #a modifier
+        return commande["distance"]
 
-def vitesse(commande):
+
+def vitesse(commande):      #fonction qui teste si la commande est rapide, pour éviter les répétitions
     return commande["vitesse"]=='s'
 
-async def envoi_carre(commande_carree,com):
-    if vitesse(commande_carree):
-        if commande_carree["direction"]=='l':
+async def envoi_carre(commande_carree,com):     #fonction qui traite le carré
+    if vitesse(commande_carree):                #si carré rapide
+        if commande_carree["direction"]=='l':       #si carré à gauche
             for i in range(4):
                 await com.envoie_bluetooth('t')
                 await asyncio.sleep(0.6)
                 await com.envoie_bluetooth('f')
                 await asyncio.sleep(0.4)
-        else:
+        else:                                       #si carré à droite
             for i in range(4):
                 await com.envoie_bluetooth('t')
                 await asyncio.sleep(0.6)
                 await com.envoie_bluetooth('h')
                 await asyncio.sleep(0.4)
-    else:
+    else:                                       #si carré pas rapide
         if commande_carree["direction"]=='l':
             for i in range(4):
                 await com.envoie_bluetooth('z')
@@ -314,12 +268,12 @@ async def envoi_carre(commande_carree,com):
 
 
 
-async def envoi_zigzag(commande_zigzag,com):
-    nb_zigzag=commande_zigzag["angle_distance"]
+async def envoi_zigzag(commande_zigzag,com):     #fonction qui traite le zigzag
+    nb_zigzag=commande_zigzag["distance"]           #nombre de zigzag à effectuer
 
-    if vitesse(commande_zigzag):
-        if nb_zigzag==0:
-            if commande_zigzag["direction"]=='l':
+    if vitesse(commande_zigzag):                    #si zigzag rapide
+        if nb_zigzag==0:                                #si un seul zigzag
+            if commande_zigzag["direction"]=='l':           #si zigzag à gauche
                 await com.envoie_bluetooth('t')
                 await asyncio.sleep(0.6)
                 await com.envoie_bluetooth('h')
@@ -330,7 +284,7 @@ async def envoi_zigzag(commande_zigzag,com):
                 await asyncio.sleep(0.4)
                 await com.envoie_bluetooth('t')
                 await asyncio.sleep(0.4)
-            else:
+            else:                                           #si zigzag à droite
                 await com.envoie_bluetooth('t')
                 await asyncio.sleep(0.6)
                 await com.envoie_bluetooth('h')
@@ -341,7 +295,7 @@ async def envoi_zigzag(commande_zigzag,com):
                 await asyncio.sleep(0.4)
                 await com.envoie_bluetooth('t')
                 await asyncio.sleep(0.4)
-        else:
+        else:                                           #si plusieurs zigzags
             for i in range(nb_zigzag):
                 if commande_zigzag["direction"]=='l':
                     await com.envoie_bluetooth('t')
@@ -366,7 +320,7 @@ async def envoi_zigzag(commande_zigzag,com):
                     await com.envoie_bluetooth('t')
                     await asyncio.sleep(0.4)
         
-    else:
+    else:                                           #si zigzag rapide
         if nb_zigzag==0:
             if commande_zigzag["direction"]=='l':
                 await com.envoie_bluetooth('z')
@@ -416,53 +370,45 @@ async def envoi_zigzag(commande_zigzag,com):
                     await asyncio.sleep(0.5)
 
 
-def test_arret(liste_commandes):
+def test_arret(liste_commandes):  #fonction qui teste l'arrêt du programme
     for commande in liste_commandes:
-        if commande["commande"]=='e':
+        if commande["commande"]=='e':       #on teste si le caratère "e" est dans le dictionnaire
             return True
     return False
 
 
-async def main():
-    com = communication()
-    await com.init_HM10()
+async def main():         
+
+    com = communication()       #initialisation de la communication et connexion au robot en bluetooth
+    await com.init_HM10()       
     await com.envoie_bluetooth("i")
-    liste_commandes=[]
-    historique_commandes=[]
-    while True:
-        if keyboard.is_pressed('l') or test_arret(liste_commandes):
+    liste_commandes=[]          #création de la liste des commandes
+    historique_commandes=[]     #création de l'historique des commandes
+
+    while True:                    #boucle principale
+        if keyboard.is_pressed('l') or test_arret(liste_commandes):   #test de l'arrêt du programme
             await com.envoie_bluetooth("p")
             await com.envoie_bluetooth("m")
             await com.close()
             break
 
-        # calcul du chemin de choix_langue.txt comme frère de Programmes
-        #base_dir = os.path.dirname(__file__)
-        #interface_dir = os.path.abspath(os.path.join(base_dir, os.pardir))
-        #chemin = os.path.join(interface_dir, "Casse_Noisette", "choix_langue.txt")
-        #chemin = "choix_langue.txt"
+        numero_langue, langue = lire_choix_langue(os.getcwd() + "\\Casse_Noisette\\choix_langue.txt")   #récupération du numéro de la langue
 
-        numero_langue, langue = lire_choix_langue(os.getcwd() + "\\Casse_Noisette\\choix_langue.txt")
-        #print(lire_choix_langue(chemin))
-        #print(numero)
-
-        if langue is None:
+        if langue is None: #si pas de langue renseignée
             sys.exit(1)
 
-        code_langue = obtenir_code_langue(langue)
-        print("Langue choisie : ", langue, ". Numéro : ", numero_langue, ". Code langue : ", code_langue, ".")
+        code_langue = obtenir_code_langue(langue)       #obtention du code de la langue
+        print("Langue choisie : ", langue, ". Numéro : ", numero_langue, ". Code langue : ", code_langue, ".") #récapitulatif de la langue choisie
 
-        new_reco,contenu_audio=recuperer_audio(code_langue)
+        new_reco,contenu_audio=recuperer_audio(code_langue)  #nouvelle écoute
 
-        if new_reco :
-            liste_commandes=[]
-            structure_commande=parcourir_commande(contenu_audio, numero_langue, liste_commandes)
-            print(structure_commande)
-            executer_mouvement(liste_commandes,historique_commandes)
-            print("liste_commandes : ",liste_commandes)
-            await envoi_commandes(liste_commandes, com)
-            historique_commandes.append(liste_commandes)
+        if new_reco :   #si pas de nouvelle reconnaissance, ruen n'est exécuté
+            liste_commandes=[]     #réinitialisation de la liste des commandes
+            parcourir_commande(contenu_audio, numero_langue, liste_commandes)  #remplissage des dictionnaires
+            executer_mouvement(liste_commandes,historique_commandes)  #établissement des commandes d'envoi
+            await envoi_commandes(liste_commandes, com)  #envoi des commandes
+            historique_commandes.append(liste_commandes)  #mise à jour de l'historique des commandes
         
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(main())     #lancement du programme
