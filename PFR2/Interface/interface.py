@@ -1,3 +1,4 @@
+# Importation des bibliothèques nécessaires
 import tkinter as tk
 import subprocess
 import os
@@ -6,7 +7,7 @@ import csv
 from PIL import Image, ImageTk
 from tkinter import simpledialog, messagebox
 
-# Définition des constantes
+# Définition des constantes pour les différents libellés utilisés dans le menu
 UTILISATEUR = "👤 Utilisateur"
 ADMINISTRATEUR = "🔧 Administrateur"
 MODE_AUTOMATIQUE = "🤖 Mode automatique"
@@ -26,9 +27,9 @@ AVEC_VOIX = "🎤 Avec la voix"
 RETOUR = "🔙 Retour"
 QUITTER = "❌ Quitter"
 
-# Définition des fichiers
+# Chemins des fichiers ou programmes utilisés dans le projet
 INITIALISATION_UTILISATEUR = "Programmes\\initialisation_utilisateur.py"
-ACTIVATION_VOCAL = "Programmes\\commande_vocale_v6biturbo.py" #commande_vocale_v6biturbo commande_vocal_interface
+ACTIVATION_VOCAL = "Programmes\\commande_vocale_v6biturbo.py"
 ACTIVATION_MANETTE = "Programmes\\Com_Manette.py"
 ACTIVATION_AUTOMATIQUE = "Programmes\\automatique.py"
 ACTIVATION_SUIVIE = "Programmes\\image_suivie.py"
@@ -36,7 +37,7 @@ ACTIVATION_DETECTION = "Programmes\\detection_all_simu.py"
 ACTIVATION_CAMERA = "Programmes\\lancer_camera.py"
 ACTIVATION_CARTOGRAPHIE = "Programmes\\connexion_Raspberry.py"
 
-
+# Fichiers CSV et images utilisés
 LISTE_COMMANDE_VOCAL = "Casse_Noisette\\liste_commande_vocale.csv"
 LISTE_COMMANDE_VOCAL_LECTURE = "Casse_Noisette/liste_commande_vocale.csv"
 CARTE = "Casse_Noisette/plan_Toulouse.jpeg"
@@ -44,32 +45,34 @@ BIENVENUE = "Casse_Noisette/image_PFR_4.png"
 FICHIER_MDP = "Casse_Noisette/mdp_admin.txt"
 FICHIER_CPT_ULTRASON = "Casse_Noisette/activation_capteur_ultrason.txt"
 
-# Fonction pour lire le mot de passe enregistré
+# Fonction pour lire le mot de passe stocké dans un fichier
 def lire_mot_de_passe():
     if not os.path.exists(FICHIER_MDP):
         with open(FICHIER_MDP, "w") as f:
-            f.write("Groupe5")
+            f.write("Groupe5")  # mot de passe par défaut
         return "Groupe5"
     with open(FICHIER_MDP, "r") as f:
         return f.read().strip()
 
-# Fonction pour écrire un nouveau mot de passe
+# Fonction pour écrire un nouveau mot de passe dans le fichier
 def ecrire_mot_de_passe(nouveau_mdp):
     with open(FICHIER_MDP, "w") as f:
         f.write(nouveau_mdp.strip())
 
+# Classe principale de l'application
 class MenuApp:
     def __init__(self, root):
-        #subprocess.run(["python", INITIALISATION_UTILISATEUR])
-
+        # Configuration initiale de la fenêtre tkinter
         self.root = root
         self.root.title("Menu de Navigation")
         self.root.geometry("900x500")
         self.root.configure(bg="#1e1e1e")
 
+        # Variables d'état
         self.langue_selectionnee = None
         self.langue_menu_actif = False
 
+        # Création de la section d'aide
         self.help_frame = tk.Frame(self.root, bg="#2b2b2b")
         self.help_label = tk.Label(self.help_frame, text="", font=("Arial", 14), justify=tk.LEFT, wraplength=700, bg="#2b2b2b", fg="#f1f1f1")
         self.help_label.pack(pady=10)
@@ -81,7 +84,7 @@ class MenuApp:
         self.quitter_button.pack(side=tk.RIGHT, padx=20)
         self.help_buttons.pack(pady=20)
 
-        # Menus
+        # Définition des différents menus
         self.main_menu = [UTILISATEUR, ADMINISTRATEUR, QUITTER]
         self.user_menu = [MODE_AUTOMATIQUE, MODE_MANUEL, MODE_IMAGE, CARTOGRAPHIE, CHANGER_LANGUE, RETOUR, QUITTER]
         self.manuel_menu = [AVEC_MANETTE, AVEC_VOIX, RETOUR, QUITTER]
@@ -91,21 +94,26 @@ class MenuApp:
         self.current_menu = self.main_menu
         self.selected_index = 0
 
+        # Label pour afficher les options du menu
         self.label = tk.Label(self.root, text="", font=("Consolas", 20), justify=tk.LEFT, anchor="nw", bg="#1e1e1e", fg="#dcdcdc")
         self.label.place(x=50, y=50)
 
+        # Label pour afficher les images
         self.image_label = tk.Label(self.root, bg="#1e1e1e")
         self.image_label.place(x=450, y=70)
 
         self.update_menu()
+
+        # Bind des touches directionnelles pour naviguer dans le menu
         self.root.bind("<Up>", self.navigate_up)
         self.root.bind("<Down>", self.navigate_down)
         self.root.bind("<Return>", self.select_option)
 
+    # Affichage d'une image sur la partie droite de l'écran
     def afficher_image(self, chemin_image):
         try:
             image = Image.open(chemin_image)
-            image = image.resize((int(768/2), int(768/2))) #(350, 350)
+            image = image.resize((int(768/2), int(768/2)))  # Redimensionnement
             self.photo = ImageTk.PhotoImage(image)
             self.image_label.config(image=self.photo)
             self.image_label.image = self.photo
@@ -113,12 +121,14 @@ class MenuApp:
             print(f"Erreur chargement image : {e}")
             self.image_label.config(image="")
 
+    # Met à jour le menu affiché
     def update_menu(self):
         display_text = "\n".join(
             [f"> {item} <" if i == self.selected_index else item for i, item in enumerate(self.current_menu)]
         )
         self.label.config(text=display_text)
 
+        # Affiche une image selon le menu
         if self.current_menu == self.main_menu:
             self.afficher_image(BIENVENUE)
         elif self.current_menu in [self.user_menu, self.manuel_menu, self.image_menu]:
@@ -126,16 +136,20 @@ class MenuApp:
         else:
             self.image_label.config(image="")
 
+    # Navigation vers le haut
     def navigate_up(self, event):
         self.selected_index = (self.selected_index - 1) % len(self.current_menu)
         self.update_menu()
 
+    # Navigation vers le bas
     def navigate_down(self, event):
         self.selected_index = (self.selected_index + 1) % len(self.current_menu)
         self.update_menu()
 
+    # Action quand on sélectionne une option du menu
     def select_option(self, event):
         choice = self.current_menu[self.selected_index]
+
         # Si on est dans le menu des langues
         if self.langue_menu_actif:
             choix_langue = self.current_menu[self.selected_index]
@@ -149,9 +163,9 @@ class MenuApp:
                 self.current_menu = self.user_menu
             self.selected_index = 0
             self.update_menu()
-            return  # Ne pas exécuter le reste
+            return
 
-        ### Menu Principal
+        # Gestion des choix du menu principal
         if choice == UTILISATEUR:
             self.current_menu = self.user_menu
         elif choice == ADMINISTRATEUR:
@@ -160,7 +174,7 @@ class MenuApp:
             else:
                 self.current_menu = self.main_menu
 
-        ### Gestion de la sélection d'une option MODE UTILISATEUR ###
+        # Gestion des sous-menus utilisateur
         elif choice == MODE_AUTOMATIQUE:
             subprocess.run(["python", ACTIVATION_AUTOMATIQUE])
         elif choice == MODE_MANUEL:
@@ -169,13 +183,13 @@ class MenuApp:
         elif choice == MODE_IMAGE:
             self.current_menu = self.image_menu
             self.selected_index = 0
-        elif choice == CHANGER_LANGUE:     
+        elif choice == CHANGER_LANGUE:
             self.ouvrir_menu_langue()
         elif choice == CARTOGRAPHIE:
             print("Réalisation de la cartographie")
             subprocess.run(["python", ACTIVATION_CARTOGRAPHIE])
 
-        ### Gestion de la sélection d'une option MANUEL ###
+        # Gestion des sous-menus manuel
         elif choice == AVEC_MANETTE:
             print("Contrôle avec la manette activé")
             subprocess.run(["python", ACTIVATION_MANETTE])
@@ -183,15 +197,15 @@ class MenuApp:
             print("Contrôle avec la voix activé")
             subprocess.run(["python", ACTIVATION_VOCAL])
 
-        ### Gestion de la sélection d'une option IMAGE ###
+        # Gestion des sous-menus image
         elif choice == SUIVEUR:
             subprocess.run(["python", ACTIVATION_SUIVIE])
         elif choice == DETECTION:
             subprocess.run(["python", ACTIVATION_DETECTION])
         elif choice == CAMERA:
-            subprocess.run(["python", ACTIVATION_CAMERA]) 
+            subprocess.run(["python", ACTIVATION_CAMERA])
 
-        ### Gestion de la sélection d'une option ADMINISTRATEUR ###
+        # Options admin
         elif choice == CHANGER_MDP:
             self.changer_mot_de_passe()
         elif choice == AJOUTER_LANGUE:
@@ -214,6 +228,7 @@ class MenuApp:
         self.selected_index = 0
         self.update_menu()
 
+    # Vérifie le mot de passe administrateur
     def verifier_mot_de_passe(self):
         mot_de_passe = lire_mot_de_passe()
         essais = 0
@@ -229,6 +244,7 @@ class MenuApp:
         messagebox.showinfo("Retour", "Trop d’essais. Retour au menu principal.")
         return False
 
+    # Change le mot de passe admin
     def changer_mot_de_passe(self):
         mot_de_passe_actuel = lire_mot_de_passe()
         ancien = simpledialog.askstring("Changer mot de passe", "Entrez l’ancien mot de passe :")
@@ -242,6 +258,7 @@ class MenuApp:
         ecrire_mot_de_passe(nouveau)
         messagebox.showinfo("Succès", "Mot de passe modifié avec succès.")
 
+    # Affiche les instructions pour ajouter une langue
     def afficher_aide_ajout_langue(self):
         self.label.place_forget()
         self.image_label.place_forget()
@@ -250,21 +267,21 @@ class MenuApp:
             "- Vous pouvez l’éditer avec Excel, Libre Office ou un éditeur de texte.\n"
             "- Pour ajouter une langue, insérez une nouvelle colonne avec la langue souhaitée.\n"
             "- Il ne faut mettre chaque commande qu'une seule fois! Si vous le voulez rajouté des conjugaisons\n\n"
-
             "💾 N’oubliez pas d’enregistrer avant de fermer le fichier !!!"
         ))
         self.help_frame.pack(pady=30)
 
         try:
-            if platform.system() == "Windows":  # Windows
+            if platform.system() == "Windows":
                 os.startfile(LISTE_COMMANDE_VOCAL)
-            elif platform.system() == "Darwin":  # macOS
+            elif platform.system() == "Darwin":
                 subprocess.run(["open", LISTE_COMMANDE_VOCAL])
-            else:  # Linux
+            else:
                 subprocess.run(["xdg-open", LISTE_COMMANDE_VOCAL])
         except Exception as e:
             print(f"❌ Impossible d’ouvrir le fichier : {e}")
-    
+
+    # Ouvre le menu pour choisir une langue
     def ouvrir_menu_langue(self):
         try:
             with open(LISTE_COMMANDE_VOCAL_LECTURE, mode='r', encoding='utf-8', newline='') as f:
@@ -275,13 +292,13 @@ class MenuApp:
             print(f"Erreur lors de la lecture des langues : {e}")
             langues = ["Aucune langue disponible"]
 
-        self.menu_langues = langues  # On garde la liste pour vérifier la sélection
+        self.menu_langues = langues
         self.current_menu = langues + [RETOUR]
         self.langue_menu_actif = True
         self.selected_index = 0
         self.update_menu()
 
-
+    # Retour depuis l’aide vers le menu admin
     def retour_depuis_aide(self):
         self.help_frame.pack_forget()
         self.label.place(x=50, y=50)
@@ -290,6 +307,7 @@ class MenuApp:
         self.selected_index = 0
         self.update_menu()
 
+# Lancement de l'application
 if __name__ == "__main__":
     root = tk.Tk()
     app = MenuApp(root)
